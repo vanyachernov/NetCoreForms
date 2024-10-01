@@ -1,8 +1,8 @@
 using CSharpFunctionalExtensions;
-using Forms.Domain.UserManagement.ValueObjects;
+using Forms.Domain.TemplateManagement.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace Forms.Domain.UserManagement;
+namespace Forms.Domain.TemplateManagement.Entities;
 
 public class User : IdentityUser
 {

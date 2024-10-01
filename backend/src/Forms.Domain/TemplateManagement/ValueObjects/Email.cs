@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
 
-namespace Forms.Domain.UserManagement.ValueObjects;
+namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record Email
 {

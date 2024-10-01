@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
 using Forms.Domain.Shared;
 
-namespace Forms.Domain.UserManagement.ValueObjects;
+namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record FullName
 {

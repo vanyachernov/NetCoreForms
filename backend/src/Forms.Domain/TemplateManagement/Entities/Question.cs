@@ -19,7 +19,7 @@ public class Question : Shared.Entity<QuestionId>
     }
 
     public Title Title { get; private set; } = default!;
-    public QuestionType Type { get; private set; } = default!;
+    public QuestionType Type { get; private set; }
 
     public static Result<Question> Create(
         QuestionId id, 

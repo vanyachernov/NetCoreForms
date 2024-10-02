@@ -4,9 +4,9 @@ namespace Forms.Domain.Shared.ValueObjects;
 
 public record Title
 {
-    private Title(string title)
+    private Title(string value)
     {
-        Value = title;
+        Value = value;
     }
 
     public string Value { get; } = default!;

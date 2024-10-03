@@ -16,4 +16,4 @@ public record QuestionId
     public static QuestionId Create(Guid id) => new(id);
 
     public static implicit operator Guid(QuestionId id) => id.Value; 
-}
+};

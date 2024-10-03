@@ -5,9 +5,9 @@ namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record Description
 {
-    private Description(string description)
+    private Description(string value)
     {
-        Value = description;
+        Value = value;
     }
 
     public string Value { get; } = default!;

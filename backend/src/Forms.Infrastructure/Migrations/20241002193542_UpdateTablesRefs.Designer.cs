@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Forms.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forms.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    partial class TemplateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002193542_UpdateTablesRefs")]
+    partial class UpdateTablesRefs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

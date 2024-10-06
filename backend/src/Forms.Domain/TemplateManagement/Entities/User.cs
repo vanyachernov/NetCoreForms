@@ -14,6 +14,9 @@ public class User : IdentityUser
     }
 
     public FullName FullName { get; private set; } = default!;
+    
+    public void SetEmail(Email email) => Email = email.Value;
+    public void SetUsername(string username) => UserName = username;
 
     public static Result<User> Create(FullName fullName)
     {

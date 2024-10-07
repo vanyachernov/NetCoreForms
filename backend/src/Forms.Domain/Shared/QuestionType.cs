@@ -2,7 +2,8 @@ namespace Forms.Domain.Shared;
 
 public enum QuestionType
 {
-    Text,
+    TextShort,
+    TextLong,
     Number,
-    Combobox
+    Checkbox
 }

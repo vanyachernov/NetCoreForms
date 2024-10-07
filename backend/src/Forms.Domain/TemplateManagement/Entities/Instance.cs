@@ -6,28 +6,42 @@ namespace Forms.Domain.TemplateManagement.Entities;
 
 public class Instance : Shared.Entity<InstanceId>
 {
-    private readonly List<Answer> _answers = [];
-    
-    private Instance(InstanceId id) : base(id) { }
+    private readonly List<Answer> _answers;
+
+    private Instance(InstanceId id) : base(id)
+    {
+        _answers = [];
+    }
 
     private Instance(
         InstanceId id,
+        Template template,
         User respondent,
-        Template template) : base(id)
+        DateTime createdAt) : base(id)
     {
-        Respondent = respondent;
         Template = template;
+        Respondent = respondent;
+        CreatedAt = createdAt;
+        _answers = [];
     }
 
-    public User Respondent { get; private set; } = default!;
     public Template Template { get; private set; } = default!;
+    public User Respondent { get; private set; } = default!;
+    public DateTime CreatedAt { get; private set; } = default!;
     public IReadOnlyCollection<Answer> Answers => _answers;
+
+    public void AddAnswer(Answer answer) => _answers.Add(answer);
 
     public static Result<Instance> Create(
         InstanceId id,
+        Template template,
         User respondent,
-        Template template)
+        DateTime createdAt)
     {
-        return new Instance(id, respondent, template);
+        return new Instance(
+            id, 
+            template,
+            respondent,
+            createdAt);
     }
 }

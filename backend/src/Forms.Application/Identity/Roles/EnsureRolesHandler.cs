@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Forms.Application.IdentityManagement.Roles;
+namespace Forms.Application.Identity.Roles;
 
 public class EnsureRolesHandler(RoleManager<IdentityRole> roleManager)
 {

@@ -3,7 +3,7 @@ using Forms.Domain.TemplateManagement.Entities;
 using Forms.Domain.TemplateManagement.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace Forms.Application.IdentityManagement.Admin;
+namespace Forms.Application.Identity.Admin;
 
 public class EnsureAdminHandler(UserManager<User> userManager)
 {

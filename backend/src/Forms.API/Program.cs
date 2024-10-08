@@ -1,7 +1,7 @@
 using Forms.API;
 using Forms.Application;
-using Forms.Application.IdentityManagement.Admin;
-using Forms.Application.IdentityManagement.Roles;
+using Forms.Application.Identity.Admin;
+using Forms.Application.Identity.Roles;
 using Forms.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +37,11 @@ var app = builder.Build();
         await adminService.Handle();
     }
     
-    app.MapControllers();
+    app.UseAuthentication();
 
+    app.UseAuthorization();
+    
+    app.MapControllers();
+    
     app.Run();
 }

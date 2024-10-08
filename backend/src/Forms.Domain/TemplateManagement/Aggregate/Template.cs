@@ -8,9 +8,12 @@ namespace Forms.Domain.TemplateManagement.Aggregate;
 
 public sealed class Template : Shared.Entity<TemplateId>
 {
-    private readonly List<Question> _questions = [];
-    
-    private Template(TemplateId id) : base(id) { }
+    private readonly List<Question> _questions;
+
+    private Template(TemplateId id) : base(id)
+    {
+        _questions = [];
+    }
 
     private Template(
         TemplateId id,
@@ -19,12 +22,15 @@ public sealed class Template : Shared.Entity<TemplateId>
     {
         Title = title;
         Description = description;
+        _questions = [];
     }
 
     public Title Title { get; private set; } = default!;
     public Description Description { get; private set; } = default!;
 
     public IReadOnlyCollection<Question> Questions => _questions;
+
+    public void AddQuestion(Question question) => _questions.Add(question);
 
     public static Result<Template> Create(
         TemplateId id, 

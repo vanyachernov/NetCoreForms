@@ -28,5 +28,23 @@ public class QuestionsConfiguration : IEntityTypeConfiguration<Question>
                 .HasColumnName("title")
                 .IsRequired();
         });
+
+        builder.Property(t => t.Type).IsRequired();
+
+        builder.ComplexProperty(t => t.Order, tb =>
+        {
+            tb.Property(tbb => tbb.Value).IsRequired();
+        });
+
+        builder.ComplexProperty(t => t.IsRequired, tb =>
+        {
+            tb.Property(tbb => tbb.Value).IsRequired();
+        });
+
+        builder
+            .HasOne(t => t.Template)
+            .WithMany()
+            .HasForeignKey("template_id")
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

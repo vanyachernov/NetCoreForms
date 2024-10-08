@@ -1,7 +1,7 @@
-using Forms.Domain.Shared;
+using System.Text.Json;
 using Forms.Domain.Shared.IDs;
-using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
+using Forms.Domain.TemplateManagement.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,12 +23,15 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
 
         builder.HasOne(a => a.Question)
             .WithMany()
-            .HasForeignKey("answers_id")
+            .HasForeignKey("question_id")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.ComplexProperty(a => a.AnswerValue, ab =>
-        {
-            ab.Property(abb => abb.Value).IsRequired();
-        });
+        builder.Property(a => a.AnswerValue)
+            .HasConversion(
+                value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
+                json => JsonSerializer.Deserialize<AnswerValue>(json, JsonSerializerOptions.Default)!
+            )
+            .HasColumnType("jsonb")
+            .IsRequired();
     }
 }

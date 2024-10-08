@@ -62,32 +62,34 @@ namespace Forms.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("AnswerValue")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("answer_value");
+
+                    b.Property<Guid>("InstanceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("instance_id");
+
                     b.Property<Guid?>("answer_id")
                         .HasColumnType("uuid")
                         .HasColumnName("answer_id");
 
-                    b.Property<Guid>("answers_id")
+                    b.Property<Guid>("question_id")
                         .HasColumnType("uuid")
-                        .HasColumnName("answers_id");
-
-                    b.ComplexProperty<Dictionary<string, object>>("AnswerValue", "Forms.Domain.TemplateManagement.Entities.Answer.AnswerValue#AnswerValue", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("answer_value_value");
-                        });
+                        .HasColumnName("question_id");
 
                     b.HasKey("Id")
                         .HasName("pk_answers");
 
+                    b.HasIndex("InstanceId")
+                        .HasDatabaseName("ix_answers_instance_id");
+
                     b.HasIndex("answer_id")
                         .HasDatabaseName("ix_answers_answer_id");
 
-                    b.HasIndex("answers_id")
-                        .HasDatabaseName("ix_answers_answers_id");
+                    b.HasIndex("question_id")
+                        .HasDatabaseName("ix_answers_question_id");
 
                     b.ToTable("answers", (string)null);
                 });
@@ -97,6 +99,10 @@ namespace Forms.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("respondent_id")
                         .HasColumnType("text")
@@ -128,9 +134,31 @@ namespace Forms.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("type");
 
+                    b.Property<Guid>("template_id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
+
                     b.Property<Guid?>("templates_id")
                         .HasColumnType("uuid")
                         .HasColumnName("templates_id");
+
+                    b.ComplexProperty<Dictionary<string, object>>("IsRequired", "Forms.Domain.TemplateManagement.Entities.Question.IsRequired#IsRequired", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<bool>("Value")
+                                .HasColumnType("boolean")
+                                .HasColumnName("is_required_value");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("Order", "Forms.Domain.TemplateManagement.Entities.Question.Order#Order", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("order_value");
+                        });
 
                     b.ComplexProperty<Dictionary<string, object>>("Title", "Forms.Domain.TemplateManagement.Entities.Question.Title#Title", b1 =>
                         {
@@ -145,6 +173,9 @@ namespace Forms.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_questions");
+
+                    b.HasIndex("template_id")
+                        .HasDatabaseName("ix_questions_template_id");
 
                     b.HasIndex("templates_id")
                         .HasDatabaseName("ix_questions_templates_id");
@@ -415,6 +446,13 @@ namespace Forms.Infrastructure.Migrations
 
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Answer", b =>
                 {
+                    b.HasOne("Forms.Domain.TemplateManagement.Entities.Instance", "Instance")
+                        .WithMany()
+                        .HasForeignKey("InstanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_answers_instances_instance_id");
+
                     b.HasOne("Forms.Domain.TemplateManagement.Entities.Instance", null)
                         .WithMany("Answers")
                         .HasForeignKey("answer_id")
@@ -423,10 +461,12 @@ namespace Forms.Infrastructure.Migrations
 
                     b.HasOne("Forms.Domain.TemplateManagement.Entities.Question", "Question")
                         .WithMany()
-                        .HasForeignKey("answers_id")
+                        .HasForeignKey("question_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_answers_questions_answers_id");
+                        .HasConstraintName("fk_answers_questions_question_id");
+
+                    b.Navigation("Instance");
 
                     b.Navigation("Question");
                 });
@@ -453,11 +493,20 @@ namespace Forms.Infrastructure.Migrations
 
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Question", b =>
                 {
+                    b.HasOne("Forms.Domain.TemplateManagement.Aggregate.Template", "Template")
+                        .WithMany()
+                        .HasForeignKey("template_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_questions_templates_template_id");
+
                     b.HasOne("Forms.Domain.TemplateManagement.Aggregate.Template", null)
                         .WithMany("Questions")
                         .HasForeignKey("templates_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_questions_templates_templates_id");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

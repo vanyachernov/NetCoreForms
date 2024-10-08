@@ -9,7 +9,12 @@ namespace Forms.Domain.TemplateManagement.Entities;
 
 public class Question : Shared.Entity<QuestionId>
 {
-    private Question(QuestionId id) : base(id) { }
+    private readonly List<Answer> _answers;
+
+    private Question(QuestionId id) : base(id)
+    {
+        _answers = [];
+    }
 
     private Question(
         QuestionId id,
@@ -24,6 +29,7 @@ public class Question : Shared.Entity<QuestionId>
         Order = order;
         IsRequired = isRequired;
         Template = template;
+        _answers = [];
     }
 
     public Title Title { get; private set; } = default!;
@@ -31,6 +37,10 @@ public class Question : Shared.Entity<QuestionId>
     public Order Order { get; private set; } = default!;
     public IsRequired IsRequired { get; private set; } = default!;
     public Template Template { get; private set; } = default!;
+
+    public IReadOnlyCollection<Answer> Answers => _answers;
+    
+    public void AddAnswer(Answer answer) => _answers.Add(answer);
 
     public static Result<Question> Create(
         QuestionId id, 

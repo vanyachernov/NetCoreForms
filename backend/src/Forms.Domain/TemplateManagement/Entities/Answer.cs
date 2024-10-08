@@ -12,27 +12,32 @@ public class Answer : Shared.Entity<AnswerId>
         AnswerId id,
         Instance instance,
         Question question,
-        AnswerValue answer) : base(id)
+        AnswerValue answer,
+        IsCorrect isCorrect) : base(id)
     {
         Question = question;
         Instance = instance;
         AnswerValue = answer;
+        IsCorrect = isCorrect;
     }
     
     public Question Question { get; private set; } = default!;
     public Instance Instance { get; private set; } = default!;
     public AnswerValue AnswerValue { get; private set; } = default!;
+    public IsCorrect IsCorrect { get; private set; } = default!;
 
     public static Result<Answer> Create(
         AnswerId id,
         Instance instance,
         Question question,
-        AnswerValue answer)
+        AnswerValue answer,
+        IsCorrect isCorrect)
     {
         return new Answer(
             id, 
             instance,
             question, 
-            answer);
+            answer,
+            isCorrect);
     }
 }

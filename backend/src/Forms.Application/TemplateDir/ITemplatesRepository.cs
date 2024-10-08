@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Forms.Application.TemplateDir.GetQuestions;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
 
@@ -24,5 +25,15 @@ public interface ITemplatesRepository
     /// <returns>A <see cref="Task{User}"/>.</returns>
     Task<Guid> AddQuestion(
         Question question, 
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Return a list of template's questions.
+    /// </summary>
+    /// <param name="templateId">A template identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{User}"/>.</returns>
+    Task<IEnumerable<GetQuestionsResponse>> GetQuestions(
+        Guid templateId,
         CancellationToken cancellationToken = default);
 }

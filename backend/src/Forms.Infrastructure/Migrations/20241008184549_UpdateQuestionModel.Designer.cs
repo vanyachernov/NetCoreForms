@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Forms.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forms.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    partial class TemplateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008184549_UpdateQuestionModel")]
+    partial class UpdateQuestionModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +74,10 @@ namespace Forms.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("instance_id");
 
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("question_id");
+
                     b.Property<Guid?>("answer_id")
                         .HasColumnType("uuid")
                         .HasColumnName("answer_id");
@@ -96,13 +103,20 @@ namespace Forms.Infrastructure.Migrations
                     b.HasIndex("InstanceId")
                         .HasDatabaseName("ix_answers_instance_id");
 
+                    b.HasIndex("QuestionId")
+                        .HasDatabaseName("ix_answers_question_id");
+
                     b.HasIndex("answer_id")
                         .HasDatabaseName("ix_answers_answer_id");
 
                     b.HasIndex("question_id")
-                        .HasDatabaseName("ix_answers_question_id");
+                        .HasDatabaseName("ix_answers_question_id1");
 
-                    b.ToTable("answers", (string)null);
+                    b.ToTable("answers", null, t =>
+                        {
+                            t.Property("question_id")
+                                .HasColumnName("question_id1");
+                        });
                 });
 
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Instance", b =>
@@ -464,18 +478,25 @@ namespace Forms.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_answers_instances_instance_id");
 
+                    b.HasOne("Forms.Domain.TemplateManagement.Entities.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_answers_questions_question_id");
+
                     b.HasOne("Forms.Domain.TemplateManagement.Entities.Instance", null)
                         .WithMany("Answers")
                         .HasForeignKey("answer_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_answers_instances_answer_id");
 
-                    b.HasOne("Forms.Domain.TemplateManagement.Entities.Question", "Question")
+                    b.HasOne("Forms.Domain.TemplateManagement.Entities.Question", null)
                         .WithMany("Answers")
                         .HasForeignKey("question_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_answers_questions_question_id");
+                        .HasConstraintName("fk_answers_questions_question_id1");
 
                     b.Navigation("Instance");
 

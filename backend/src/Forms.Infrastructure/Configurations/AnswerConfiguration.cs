@@ -22,7 +22,7 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
                 value => AnswerId.Create(value));
 
         builder.HasOne(a => a.Question)
-            .WithMany()
+            .WithMany(q => q.Answers)
             .HasForeignKey("question_id")
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -33,5 +33,12 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
             )
             .HasColumnType("jsonb")
             .IsRequired();
+        
+        builder.ComplexProperty(a => a.IsCorrect, ab =>
+        {
+            ab.Property(abb => abb.Value)
+                .IsRequired()
+                .HasDefaultValue(false);
+        });
     }
 }

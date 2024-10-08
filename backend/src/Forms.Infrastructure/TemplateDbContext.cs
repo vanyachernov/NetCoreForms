@@ -11,7 +11,9 @@ public class TemplateDbContext : IdentityDbContext<User>
     private readonly IConfiguration _configuration;
     private const string DATABASE = nameof(Database);
 
-    public TemplateDbContext(IConfiguration configuration, DbContextOptions<TemplateDbContext> options)
+    public TemplateDbContext(
+        IConfiguration configuration, 
+        DbContextOptions<TemplateDbContext> options)
         : base(options)
     {
         _configuration = configuration;

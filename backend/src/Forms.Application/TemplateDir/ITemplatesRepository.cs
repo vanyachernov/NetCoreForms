@@ -1,28 +1,19 @@
 using CSharpFunctionalExtensions;
-using Forms.Application.Template.GetUsers;
-using Forms.Domain.TemplateManagement.Entities;
 using Forms.Domain.TemplateManagement.Aggregate;
+using Forms.Domain.TemplateManagement.Entities;
 
-namespace Forms.Application.Template;
+namespace Forms.Application.TemplateDir;
 
-public interface ITemplateRepository
+public interface ITemplatesRepository
 {
-    /// <summary>
-    /// Gets user list.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation Token.</param>
-    /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<Result<IEnumerable<GetUsersResponse>>> GetUsers(
-        CancellationToken cancellationToken = default);
-
     /// <summary>
     /// Create template.
     /// </summary>
     /// <param name="template">A template.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<Result<Guid>> Create(
-        Domain.TemplateManagement.Aggregate.Template template,
+    Task<Guid> Create(
+        Template template,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -31,7 +22,7 @@ public interface ITemplateRepository
     /// <param name="question">Question.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<Result<Guid>> AddQuestion(
+    Task<Guid> AddQuestion(
         Question question, 
         CancellationToken cancellationToken = default);
 }

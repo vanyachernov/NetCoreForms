@@ -1,13 +1,13 @@
 using CSharpFunctionalExtensions;
 
-namespace Forms.Application.Template.GetUsers;
+namespace Forms.Application.UserDir.GetUsers;
 
-public class GetUsersHandler(ITemplateRepository templateRepository)
+public class GetUsersHandler(IUsersRepository userRepository)
 {
     public async Task<Result<IEnumerable<GetUsersResponse>>> Handle(
         CancellationToken cancellationToken = default)
     {
-        var getUsersResult = await templateRepository.GetUsers(cancellationToken);
+        var getUsersResult = await userRepository.GetUsers(cancellationToken);
 
         return getUsersResult.IsFailure 
             ? Result.Failure<IEnumerable<GetUsersResponse>>(getUsersResult.Error) 

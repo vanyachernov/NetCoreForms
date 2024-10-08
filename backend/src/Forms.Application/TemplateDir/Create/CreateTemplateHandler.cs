@@ -3,9 +3,9 @@ using Forms.Domain.Shared.IDs;
 using Forms.Domain.Shared.ValueObjects;
 using Forms.Domain.TemplateManagement.ValueObjects;
 
-namespace Forms.Application.Template.Create;
+namespace Forms.Application.TemplateDir.Create;
 
-public class CreateTemplateHandler(ITemplateRepository templateRepository)
+public class CreateTemplateHandler(ITemplatesRepository templateRepository)
 {
     public async Task<Result<Guid>> Handle(
         CreateTemplateRequest request,
@@ -36,6 +36,6 @@ public class CreateTemplateHandler(ITemplateRepository templateRepository)
             templateToCreate.Value,
             cancellationToken);
 
-        return createTemplateResult.Value;
+        return createTemplateResult;
     }
 }

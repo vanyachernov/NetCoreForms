@@ -1,6 +1,6 @@
 using Forms.Application.DTOs;
 
-namespace Forms.Application.Template.Create;
+namespace Forms.Application.TemplateDir.Create;
 
 public record CreateTemplateRequest
 {

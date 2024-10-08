@@ -1,7 +1,8 @@
 using Forms.Application.Identity.Admin;
 using Forms.Application.Identity.Roles;
-using Forms.Application.Template.AddQuestion;
-using Forms.Application.Template.GetUsers;
+using Forms.Application.TemplateDir.AddQuestion;
+using Forms.Application.TemplateDir.Create;
+using Forms.Application.UserDir.GetUsers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Forms.Application;
@@ -17,6 +18,8 @@ public static class Inject
         services.AddScoped<AddQuestionHandler>();
         
         services.AddScoped<GetUsersHandler>();
+        
+        services.AddScoped<CreateTemplateHandler>();
             
         return services;
     }

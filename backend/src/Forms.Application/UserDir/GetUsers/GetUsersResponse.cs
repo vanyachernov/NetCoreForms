@@ -1,6 +1,6 @@
 using Forms.Application.DTOs;
 
-namespace Forms.Application.Template.GetUsers;
+namespace Forms.Application.UserDir.GetUsers;
 
 public record GetUsersResponse
 {

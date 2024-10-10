@@ -21,6 +21,7 @@ public class TemplateDbContext : IdentityDbContext<User>
     
     public DbSet<Template> Templates { get; set; }
     public DbSet<Question> Questions { get; set; }
+    public DbSet<Answer> Answers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

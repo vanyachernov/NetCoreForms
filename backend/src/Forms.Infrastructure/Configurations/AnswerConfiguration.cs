@@ -1,7 +1,5 @@
-using System.Text.Json;
 using Forms.Domain.Shared.IDs;
 using Forms.Domain.TemplateManagement.Entities;
-using Forms.Domain.TemplateManagement.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,18 +18,21 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
             .HasConversion(
                 id => id.Value,
                 value => AnswerId.Create(value));
-
-        builder.HasOne(a => a.Question)
-            .WithMany()
-            .HasForeignKey("question_id")
+        
+        builder.HasOne(a => a.Instance)
+            .WithMany(i => i.Answers)
+            .HasForeignKey("instance_id")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(a => a.AnswerValue)
-            .HasConversion(
-                value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
-                json => JsonSerializer.Deserialize<AnswerValue>(json, JsonSerializerOptions.Default)!
-            )
-            .HasColumnType("jsonb")
-            .IsRequired();
+        builder
+            .Property(a => a.TextAnswer)
+            .HasColumnName("text_answer")
+            .HasMaxLength(1000)
+            .IsRequired(false);
+        
+        builder.HasOne(a => a.SelectedAnswerOption)
+            .WithMany()
+            .HasForeignKey("selected_answer_option_id")
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -4,10 +4,7 @@ namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record AnswerValue
 {
-    private AnswerValue(string value)
-    {
-        Value = value;
-    }
+    private AnswerValue(string value) => Value = value;
 
     public string Value { get; } = default!;
 

@@ -32,8 +32,8 @@ public class InstanceConfiguration : IEntityTypeConfiguration<Instance>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(i => i.Answers)
-            .WithOne()
-            .HasForeignKey("answer_id")
+            .WithOne(a => a.Instance)
+            .HasForeignKey("instance_id")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

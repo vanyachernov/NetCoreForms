@@ -4,10 +4,7 @@ namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record Order
 {
-    private Order(int value)
-    {
-        Value = value;
-    }
+    private Order(int value) => Value = value;
 
     public int Value { get; } = default!;
 

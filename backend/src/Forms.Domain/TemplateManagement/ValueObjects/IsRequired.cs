@@ -4,10 +4,7 @@ namespace Forms.Domain.TemplateManagement.ValueObjects;
 
 public record IsRequired
 {
-    private IsRequired(bool value)
-    {
-        Value = value;
-    }
+    private IsRequired(bool value) => Value = value;
     
     public bool Value { get; }
 

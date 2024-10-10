@@ -205,7 +205,6 @@ namespace Forms.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     template_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    templates_id = table.Column<Guid>(type: "uuid", nullable: true),
                     is_required_value = table.Column<bool>(type: "boolean", nullable: false),
                     order_value = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
@@ -219,10 +218,24 @@ namespace Forms.Infrastructure.Migrations
                         principalTable: "templates",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "answer_options",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    question_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    answer_value = table.Column<string>(type: "jsonb", nullable: false),
+                    is_correct_value = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_answer_options", x => x.id);
                     table.ForeignKey(
-                        name: "fk_questions_templates_templates_id",
-                        column: x => x.templates_id,
-                        principalTable: "templates",
+                        name: "fk_answer_options_questions_question_id",
+                        column: x => x.question_id,
+                        principalTable: "questions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -232,18 +245,17 @@ namespace Forms.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    question_id = table.Column<Guid>(type: "uuid", nullable: false),
                     instance_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    answer_value = table.Column<string>(type: "jsonb", nullable: false),
-                    answer_id = table.Column<Guid>(type: "uuid", nullable: true)
+                    selected_answer_option_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    text_answer = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_answers", x => x.id);
                     table.ForeignKey(
-                        name: "fk_answers_instances_answer_id",
-                        column: x => x.answer_id,
-                        principalTable: "instances",
+                        name: "fk_answers_answer_options_selected_answer_option_id",
+                        column: x => x.selected_answer_option_id,
+                        principalTable: "answer_options",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -252,18 +264,12 @@ namespace Forms.Infrastructure.Migrations
                         principalTable: "instances",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_answers_questions_question_id",
-                        column: x => x.question_id,
-                        principalTable: "questions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_answers_answer_id",
-                table: "answers",
-                column: "answer_id");
+                name: "ix_answer_options_question_id",
+                table: "answer_options",
+                column: "question_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_answers_instance_id",
@@ -271,9 +277,9 @@ namespace Forms.Infrastructure.Migrations
                 column: "instance_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_answers_question_id",
+                name: "ix_answers_selected_answer_option_id",
                 table: "answers",
-                column: "question_id");
+                column: "selected_answer_option_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",
@@ -326,11 +332,6 @@ namespace Forms.Infrastructure.Migrations
                 name: "ix_questions_template_id",
                 table: "questions",
                 column: "template_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_questions_templates_id",
-                table: "questions",
-                column: "templates_id");
         }
 
         /// <inheritdoc />
@@ -355,13 +356,16 @@ namespace Forms.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "answer_options");
+
+            migrationBuilder.DropTable(
                 name: "instances");
 
             migrationBuilder.DropTable(
-                name: "questions");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "questions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

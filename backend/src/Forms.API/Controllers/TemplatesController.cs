@@ -1,3 +1,5 @@
+using Forms.API.Extensions;
+using Forms.API.Response;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
 using Microsoft.AspNetCore.Mvc;
@@ -35,15 +37,21 @@ public class TemplatesController : ApplicationController
     }
     
     [HttpGet("{templateId:guid}/questions")]
-    public async Task<ActionResult<IEnumerable<GetQuestionsResponse>>> GetQuestions(
+    public async Task<ActionResult> GetQuestions(
         [FromRoute] Guid templateId,
-        [FromServices] GetQuestionsHandler questions,
+        [FromServices] GetQuestionsHandler questionsHandler,
         CancellationToken cancellationToken = default)
     {
-        var questionsTemplateResult = await questions.Handle(
-            templateId,
+        var questionsTemplateResult = await questionsHandler.Handle(
+            templateId, 
             cancellationToken);
-
-        return Ok(questionsTemplateResult.Value);
+        
+        if (questionsTemplateResult.IsFailure)
+        {
+            return questionsTemplateResult.Error.ToResponse();
+        }
+        
+        return Ok(Envelope.Ok(questionsTemplateResult.Value));
     }
+
 }

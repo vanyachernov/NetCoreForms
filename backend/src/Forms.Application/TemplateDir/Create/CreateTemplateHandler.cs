@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Forms.Domain.Shared;
 using Forms.Domain.Shared.IDs;
 using Forms.Domain.Shared.ValueObjects;
 using Forms.Domain.TemplateManagement.ValueObjects;
@@ -7,20 +8,20 @@ namespace Forms.Application.TemplateDir.Create;
 
 public class CreateTemplateHandler(ITemplatesRepository templateRepository)
 {
-    public async Task<Result<Guid>> Handle(
+    public async Task<Result<Guid, Error>> Handle(
         CreateTemplateRequest request,
         CancellationToken cancellationToken = default)
     {
         var templateTitle = Title.Create(request.Title.Value);
         if (templateTitle.IsFailure)
         {
-            return Result.Failure<Guid>("Title is invalid!");
+            return Errors.General.ValueIsInvalid("Title");
         }
         
         var templateDescription = Description.Create(request.Description.Value);
         if (templateDescription.IsFailure)
         {
-            return Result.Failure<Guid>("Description is invalid!");
+            return Errors.General.ValueIsInvalid("Description");
         }
         
         var templateToCreate = Domain.TemplateManagement.Aggregate.Template.Create(
@@ -29,7 +30,7 @@ public class CreateTemplateHandler(ITemplatesRepository templateRepository)
             templateDescription.Value);
         if (templateToCreate.IsFailure)
         {
-            return Result.Failure<Guid>("Template hasn't been created!");
+            return Errors.General.ValueIsInvalid("Template");
         }
         
         var createTemplateResult = await templateRepository.Create(

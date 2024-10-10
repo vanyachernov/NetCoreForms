@@ -1,26 +1,42 @@
 using CSharpFunctionalExtensions;
+using Forms.Domain.Shared;
 
 namespace Forms.Application.TemplateDir.GetQuestions;
 
 public class GetQuestionsHandler(ITemplatesRepository templateRepository)
 {
-    public async Task<Result<IEnumerable<GetQuestionsResponse>>> Handle(
+    public async Task<Result<IEnumerable<GetQuestionsResponse>, Error>> Handle(
         Guid templateId,
         CancellationToken cancellationToken = default)
     {
-        var existingTemplate = await templateRepository.IsExists(
+        var templateExistsResult = await templateRepository.IsExists(
             templateId, 
             cancellationToken);
-
-        if (!existingTemplate)
+        
+        if (templateExistsResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<GetQuestionsResponse>>("Template not exists!");
+            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
+                templateExistsResult.Error);
         }
         
-        var questions = await templateRepository.GetQuestions(
+        if (!templateExistsResult.Value)
+        {
+            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
+                Errors.General.NotFound(templateId));
+        }
+        
+        var questionsResult = await templateRepository.GetQuestions(
             templateId, 
             cancellationToken);
-
-        return Result.Success(questions);
+        
+        if (questionsResult.IsFailure)
+        {
+            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
+                questionsResult.Error);
+        }
+        
+        return Result.Success<IEnumerable<GetQuestionsResponse>, Error>(
+            questionsResult.Value);
     }
+
 }

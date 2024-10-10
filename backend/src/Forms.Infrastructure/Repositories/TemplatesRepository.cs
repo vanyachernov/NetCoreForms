@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using Forms.Application.DTOs;
 using Forms.Application.TemplateDir;
 using Forms.Application.TemplateDir.GetQuestions;
@@ -17,7 +18,7 @@ public class TemplatesRepository : ITemplatesRepository
         _templateContext = context;
     }
     
-    public async Task<Guid> Create(
+    public async Task<Result<Guid, Error>> Create(
         Template template, 
         CancellationToken cancellationToken = default)
     {
@@ -28,20 +29,26 @@ public class TemplatesRepository : ITemplatesRepository
 
         await _templateContext.SaveChangesAsync(cancellationToken);
         
-        return template.Id.Value;
+        return Result.Success<Guid, Error>(template.Id.Value);
     }
 
-    public async Task<bool> IsExists(Guid templateId, CancellationToken cancellationToken = default)
+    public async Task<Result<bool, Error>> IsExists(
+        Guid templateId, 
+        CancellationToken cancellationToken = default)
     {
         var template = await _templateContext.Templates
             .FirstOrDefaultAsync(
                 t => t.Id == templateId, 
                 cancellationToken);
 
-        return template != null;
+        var isTemplateExists = template != null;
+        
+        return isTemplateExists 
+            ? Result.Success<bool, Error>(isTemplateExists)
+            : Errors.General.NotFound(templateId);
     }
 
-    public async Task<Guid> AddQuestion(
+    public async Task<Result<Guid, Error>> AddQuestion(
         Question question, 
         CancellationToken cancellationToken = default)
     {
@@ -49,10 +56,10 @@ public class TemplatesRepository : ITemplatesRepository
             question, 
             cancellationToken);
 
-        return question.Id;
+        return Result.Success<Guid, Error>(question.Id);
     }
 
-    public async Task<IEnumerable<GetQuestionsResponse>> GetQuestions(
+    public async Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
         Guid templateId,
         CancellationToken cancellationToken = default)
     {
@@ -65,7 +72,7 @@ public class TemplatesRepository : ITemplatesRepository
         {
             QuestionId = q.Id,
             Title = new TitleDto(q.Title.Value),
-            QuestionType = q.Type.ToString(), // Convert enum to string
+            QuestionType = q.Type.ToString(),
 
             Answers = q.Type == QuestionType.MultipleChoice 
                 ? q.Options.Select(o => new AnswerResponseDto
@@ -76,11 +83,10 @@ public class TemplatesRepository : ITemplatesRepository
                 }).ToList()
                 : new List<AnswerResponseDto>(),
 
-            // Fetching TextAnswer for text questions from related Answers
             TextAnswer = q.Type == QuestionType.TextAnswer
                 ? await _templateContext.Answers
-                    .Where(a => a.Instance.Template.Id == templateId) // Adjusted to use the template
-                    .Where(a => a.TextAnswer != null) // Ensure we only get answers with text
+                    .Where(a => a.Instance.Template.Id == templateId)
+                    .Where(a => a.TextAnswer != null)
                     .Select(a => a.TextAnswer)
                     .FirstOrDefaultAsync(cancellationToken)
                 : null

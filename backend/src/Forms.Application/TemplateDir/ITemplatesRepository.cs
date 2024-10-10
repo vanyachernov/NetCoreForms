@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
 
@@ -13,7 +14,7 @@ public interface ITemplatesRepository
     /// <param name="template">A template.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<Guid> Create(
+    Task<Result<Guid, Error>> Create(
         Template template,
         CancellationToken cancellationToken = default);
 
@@ -23,7 +24,7 @@ public interface ITemplatesRepository
     /// <param name="templateId">A template identifier.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns></returns>
-    Task<bool> IsExists(
+    Task<Result<bool, Error>> IsExists(
         Guid templateId, 
         CancellationToken cancellationToken = default);
 
@@ -33,7 +34,7 @@ public interface ITemplatesRepository
     /// <param name="question">Question.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<Guid> AddQuestion(
+    Task<Result<Guid, Error>> AddQuestion(
         Question question, 
         CancellationToken cancellationToken = default);
 
@@ -43,7 +44,7 @@ public interface ITemplatesRepository
     /// <param name="templateId">A template identifier.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{User}"/>.</returns>
-    Task<IEnumerable<GetQuestionsResponse>> GetQuestions(
+    Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
         Guid templateId,
         CancellationToken cancellationToken = default);
 }

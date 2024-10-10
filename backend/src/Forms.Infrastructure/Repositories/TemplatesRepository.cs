@@ -31,6 +31,16 @@ public class TemplatesRepository : ITemplatesRepository
         return template.Id.Value;
     }
 
+    public async Task<bool> IsExists(Guid templateId, CancellationToken cancellationToken = default)
+    {
+        var template = await _templateContext.Templates
+            .FirstOrDefaultAsync(
+                t => t.Id == templateId, 
+                cancellationToken);
+
+        return template != null;
+    }
+
     public async Task<Guid> AddQuestion(
         Question question, 
         CancellationToken cancellationToken = default)

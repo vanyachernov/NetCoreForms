@@ -18,6 +18,16 @@ public interface ITemplatesRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Check if template exists.
+    /// </summary>
+    /// <param name="templateId">A template identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns></returns>
+    Task<bool> IsExists(
+        Guid templateId, 
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Add question to template.
     /// </summary>
     /// <param name="question">Question.</param>

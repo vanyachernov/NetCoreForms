@@ -6,10 +6,10 @@ namespace Forms.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TemplatesController : ControllerBase
+public class TemplatesController : ApplicationController
 {
     [HttpPost]
-    public async Task<Guid> Create(
+    public async Task<ActionResult<Guid>> Create(
         [FromBody] CreateTemplateRequest request,
         [FromServices] CreateTemplateHandler template,
         CancellationToken cancellationToken = default)
@@ -18,11 +18,11 @@ public class TemplatesController : ControllerBase
             request,
             cancellationToken);
 
-        return createTemplateResult.Value;
+        return Ok(createTemplateResult.Value);
     }
     
     [HttpPost("questions")]
-    public async Task<Guid> AddQuestion(
+    public async Task<ActionResult<Guid>> AddQuestion(
         [FromBody] CreateTemplateRequest request,
         [FromServices] CreateTemplateHandler template,
         CancellationToken cancellationToken = default)
@@ -31,11 +31,11 @@ public class TemplatesController : ControllerBase
             request,
             cancellationToken);
 
-        return createTemplateResult.Value;
+        return Ok(createTemplateResult.Value);
     }
     
     [HttpGet("{templateId:guid}/questions")]
-    public async Task<IEnumerable<GetQuestionsResponse>> GetQuestions(
+    public async Task<ActionResult<IEnumerable<GetQuestionsResponse>>> GetQuestions(
         [FromRoute] Guid templateId,
         [FromServices] GetQuestionsHandler questions,
         CancellationToken cancellationToken = default)
@@ -44,6 +44,6 @@ public class TemplatesController : ControllerBase
             templateId,
             cancellationToken);
 
-        return questionsTemplateResult;
+        return Ok(questionsTemplateResult.Value);
     }
 }

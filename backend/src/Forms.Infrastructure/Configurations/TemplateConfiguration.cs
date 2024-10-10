@@ -34,10 +34,5 @@ public class TemplateConfiguration : IEntityTypeConfiguration<Template>
                 .HasColumnName("description")
                 .IsRequired();
         });
-        
-        builder.HasMany(t => t.Questions)
-            .WithOne()
-            .HasForeignKey("templates_id")
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

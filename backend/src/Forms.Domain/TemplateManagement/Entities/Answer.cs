@@ -1,6 +1,5 @@
 using CSharpFunctionalExtensions;
 using Forms.Domain.Shared.IDs;
-using Forms.Domain.TemplateManagement.ValueObjects;
 
 namespace Forms.Domain.TemplateManagement.Entities;
 
@@ -8,36 +7,31 @@ public class Answer : Shared.Entity<AnswerId>
 {
     private Answer(AnswerId id) : base(id) { }
 
-    private Answer(
+    public Instance Instance { get; private set; } = default!;
+    public AnswerOption? SelectedAnswerOption { get; private set; }
+    public string? TextAnswer { get; private set; }
+    
+    public static Result<Answer> CreateTextAnswer(
         AnswerId id,
         Instance instance,
-        Question question,
-        AnswerValue answer,
-        IsCorrect isCorrect) : base(id)
+        string textAnswer)
     {
-        Question = question;
-        Instance = instance;
-        AnswerValue = answer;
-        IsCorrect = isCorrect;
+        return new Answer(id)
+        {
+            Instance = instance,
+            TextAnswer = textAnswer
+        };
     }
     
-    public Question Question { get; private set; } = default!;
-    public Instance Instance { get; private set; } = default!;
-    public AnswerValue AnswerValue { get; private set; } = default!;
-    public IsCorrect IsCorrect { get; private set; } = default!;
-
-    public static Result<Answer> Create(
+    public static Result<Answer> CreateOptionAnswer(
         AnswerId id,
         Instance instance,
-        Question question,
-        AnswerValue answer,
-        IsCorrect isCorrect)
+        AnswerOption selectedOption)
     {
-        return new Answer(
-            id, 
-            instance,
-            question, 
-            answer,
-            isCorrect);
+        return new Answer(id)
+        {
+            Instance = instance,
+            SelectedAnswerOption = selectedOption
+        };
     }
 }

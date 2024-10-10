@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forms.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    [Migration("20241008184900_UpdateQuestionModelFix")]
-    partial class UpdateQuestionModelFix
+    [Migration("20241010071331_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,24 +65,47 @@ namespace Forms.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("TextAnswer")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("text_answer");
+
+                    b.Property<Guid>("instance_id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("instance_id");
+
+                    b.Property<Guid?>("selected_answer_option_id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("selected_answer_option_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_answers");
+
+                    b.HasIndex("instance_id")
+                        .HasDatabaseName("ix_answers_instance_id");
+
+                    b.HasIndex("selected_answer_option_id")
+                        .HasDatabaseName("ix_answers_selected_answer_option_id");
+
+                    b.ToTable("answers", (string)null);
+                });
+
+            modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.AnswerOption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
                     b.Property<string>("AnswerValue")
                         .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("answer_value");
 
-                    b.Property<Guid>("InstanceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("instance_id");
-
-                    b.Property<Guid?>("answer_id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("answer_id");
-
                     b.Property<Guid>("question_id")
                         .HasColumnType("uuid")
                         .HasColumnName("question_id");
 
-                    b.ComplexProperty<Dictionary<string, object>>("IsCorrect", "Forms.Domain.TemplateManagement.Entities.Answer.IsCorrect#IsCorrect", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("IsCorrect", "Forms.Domain.TemplateManagement.Entities.AnswerOption.IsCorrect#IsCorrect", b1 =>
                         {
                             b1.IsRequired();
 
@@ -94,18 +117,12 @@ namespace Forms.Infrastructure.Migrations
                         });
 
                     b.HasKey("Id")
-                        .HasName("pk_answers");
-
-                    b.HasIndex("InstanceId")
-                        .HasDatabaseName("ix_answers_instance_id");
-
-                    b.HasIndex("answer_id")
-                        .HasDatabaseName("ix_answers_answer_id");
+                        .HasName("pk_answer_options");
 
                     b.HasIndex("question_id")
-                        .HasDatabaseName("ix_answers_question_id");
+                        .HasDatabaseName("ix_answer_options_question_id");
 
-                    b.ToTable("answers", (string)null);
+                    b.ToTable("answer_options", (string)null);
                 });
 
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Instance", b =>
@@ -152,10 +169,6 @@ namespace Forms.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("template_id");
 
-                    b.Property<Guid?>("templates_id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("templates_id");
-
                     b.ComplexProperty<Dictionary<string, object>>("IsRequired", "Forms.Domain.TemplateManagement.Entities.Question.IsRequired#IsRequired", b1 =>
                         {
                             b1.IsRequired();
@@ -190,9 +203,6 @@ namespace Forms.Infrastructure.Migrations
 
                     b.HasIndex("template_id")
                         .HasDatabaseName("ix_questions_template_id");
-
-                    b.HasIndex("templates_id")
-                        .HasDatabaseName("ix_questions_templates_id");
 
                     b.ToTable("questions", (string)null);
                 });
@@ -461,26 +471,31 @@ namespace Forms.Infrastructure.Migrations
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Answer", b =>
                 {
                     b.HasOne("Forms.Domain.TemplateManagement.Entities.Instance", "Instance")
-                        .WithMany()
-                        .HasForeignKey("InstanceId")
+                        .WithMany("Answers")
+                        .HasForeignKey("instance_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_answers_instances_instance_id");
 
-                    b.HasOne("Forms.Domain.TemplateManagement.Entities.Instance", null)
-                        .WithMany("Answers")
-                        .HasForeignKey("answer_id")
+                    b.HasOne("Forms.Domain.TemplateManagement.Entities.AnswerOption", "SelectedAnswerOption")
+                        .WithMany()
+                        .HasForeignKey("selected_answer_option_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_answers_instances_answer_id");
+                        .HasConstraintName("fk_answers_answer_options_selected_answer_option_id");
 
+                    b.Navigation("Instance");
+
+                    b.Navigation("SelectedAnswerOption");
+                });
+
+            modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.AnswerOption", b =>
+                {
                     b.HasOne("Forms.Domain.TemplateManagement.Entities.Question", "Question")
-                        .WithMany("Answers")
+                        .WithMany("Options")
                         .HasForeignKey("question_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_answers_questions_question_id");
-
-                    b.Navigation("Instance");
+                        .HasConstraintName("fk_answer_options_questions_question_id");
 
                     b.Navigation("Question");
                 });
@@ -508,17 +523,11 @@ namespace Forms.Infrastructure.Migrations
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Question", b =>
                 {
                     b.HasOne("Forms.Domain.TemplateManagement.Aggregate.Template", "Template")
-                        .WithMany()
+                        .WithMany("Questions")
                         .HasForeignKey("template_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_questions_templates_template_id");
-
-                    b.HasOne("Forms.Domain.TemplateManagement.Aggregate.Template", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("templates_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_questions_templates_templates_id");
 
                     b.Navigation("Template");
                 });
@@ -592,7 +601,7 @@ namespace Forms.Infrastructure.Migrations
 
             modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.Question", b =>
                 {
-                    b.Navigation("Answers");
+                    b.Navigation("Options");
                 });
 #pragma warning restore 612, 618
         }

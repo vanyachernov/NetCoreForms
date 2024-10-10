@@ -29,7 +29,9 @@ public class QuestionsConfiguration : IEntityTypeConfiguration<Question>
                 .IsRequired();
         });
 
-        builder.Property(t => t.Type).IsRequired();
+        builder.Property(t => t.Type)
+            .HasConversion<int>()
+            .IsRequired();
 
         builder.ComplexProperty(t => t.Order, tb =>
         {
@@ -43,8 +45,13 @@ public class QuestionsConfiguration : IEntityTypeConfiguration<Question>
 
         builder
             .HasOne(t => t.Template)
-            .WithMany()
+            .WithMany(t => t.Questions)
             .HasForeignKey("template_id")
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(q => q.Options)
+            .WithOne(o => o.Question)
+            .HasForeignKey("question_id")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

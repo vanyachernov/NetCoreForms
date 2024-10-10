@@ -45,23 +45,23 @@ public class TemplatesRepository : ITemplatesRepository
         Guid templateId,
         CancellationToken cancellationToken = default)
     {
-        var questions = await _templateContext.Questions
-            .Where(q => q.Template.Id == templateId)
-            .Include(q => q.Answers)
-            .ToListAsync(cancellationToken);
+        // var questions = await _templateContext.Questions
+        //     .Where(q => q.Template.Id == templateId)
+        //     .Include(q => q.Answers)
+        //     .ToListAsync(cancellationToken);
+        //
+        // var questionResponses = questions.Select(q => new GetQuestionsResponse
+        // {
+        //     QuestionId = q.Id,
+        //     Title = new TitleDto(q.Title.Value),
+        //     Answers = q.Answers.Select(a => new AnswerResponseDto
+        //     {
+        //         AnswerId = a.Id,
+        //         Answer = new AnswerValueDto(a.AnswerValue.Value),
+        //         IsCorrect = new IsCorrectDto(a.IsCorrect.Value)
+        //     }).ToList()
+        // }).ToList();
         
-        var questionResponses = questions.Select(q => new GetQuestionsResponse
-        {
-            QuestionId = q.Id,
-            Title = new TitleDto(q.Title.Value),
-            Answers = q.Answers.Select(a => new AnswerResponseDto
-            {
-                AnswerId = a.Id,
-                Answer = new AnswerValueDto(a.AnswerValue.Value),
-                IsCorrect = new IsCorrectDto(a.IsCorrect.Value)
-            }).ToList()
-        }).ToList();
-        
-        return questionResponses;
+        return [];
     }
 }

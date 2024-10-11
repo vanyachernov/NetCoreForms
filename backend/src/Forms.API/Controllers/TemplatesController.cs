@@ -1,5 +1,7 @@
+using Forms.API.Controllers.Shared;
 using Forms.API.Extensions;
 using Forms.API.Response;
+using Forms.Application.TemplateDir.AddQuestion;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +27,8 @@ public class TemplatesController : ApplicationController
     
     [HttpPost("questions")]
     public async Task<ActionResult<Guid>> AddQuestion(
-        [FromBody] CreateTemplateRequest request,
-        [FromServices] CreateTemplateHandler template,
+        [FromBody] AddQuestionRequest request,
+        [FromServices] AddQuestionHandler template,
         CancellationToken cancellationToken = default)
     {
         var createTemplateResult = await template.Handle(
@@ -48,7 +50,8 @@ public class TemplatesController : ApplicationController
         
         if (questionsTemplateResult.IsFailure)
         {
-            return questionsTemplateResult.Error.ToResponse();
+            return questionsTemplateResult.Error
+                .ToResponse();
         }
         
         return Ok(Envelope.Ok(questionsTemplateResult.Value));

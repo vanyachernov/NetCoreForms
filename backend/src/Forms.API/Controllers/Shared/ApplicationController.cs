@@ -1,7 +1,7 @@
 using Forms.API.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Forms.API.Controllers;
+namespace Forms.API.Controllers.Shared;
 
 [ApiController]
 [Route("[controller]")]

@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Forms.Domain.Shared;
 
 namespace Forms.Domain.TemplateManagement.ValueObjects;
 
@@ -6,12 +7,12 @@ public record AnswerValue
 {
     private AnswerValue(string value) => Value = value;
 
-    public string Value { get; } = default!;
+    public string? Value { get; }
 
-    public static Result<AnswerValue> Create(string answer)
+    public static Result<AnswerValue, Error> Create(string answerValue)
     {
-        return string.IsNullOrWhiteSpace(answer) 
-            ? Result.Failure<AnswerValue>("Answer is invalid!") 
-            : new AnswerValue(answer);
+        return string.IsNullOrWhiteSpace(answerValue)
+            ? Errors.General.ValueIsInvalid("Answer")
+            : new AnswerValue(answerValue);
     }
 };

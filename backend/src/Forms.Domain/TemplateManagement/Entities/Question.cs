@@ -41,7 +41,7 @@ public class Question : Shared.Entity<QuestionId>
     public IReadOnlyCollection<AnswerOption> Options => _answerOptions;
     
     public void AddAnswerOption(AnswerOption option) => _answerOptions.Add(option);
-
+    
     public static Result<Question> Create(
         QuestionId id, 
         Title title, 

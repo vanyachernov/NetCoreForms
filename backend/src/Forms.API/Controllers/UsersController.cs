@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Forms.API.Controllers.Shared;
 using Forms.Application.UserDir.GetUsers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,10 +7,10 @@ namespace Forms.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+public class UsersController : ApplicationController
 {
     [HttpGet]
-    public async Task<IEnumerable<GetUsersResponse>> Get(
+    public async Task<ActionResult<IEnumerable<GetUsersResponse>>> Get(
         [FromServices] GetUsersHandler users,
         CancellationToken cancellationToken = default)
     {
@@ -17,9 +18,9 @@ public class UsersController : ControllerBase
 
         if (getUsersResult.IsFailure)
         {
-            return [];
+            return BadRequest([]);
         }
 
-        return getUsersResult.Value;
+        return Ok(getUsersResult.Value);
     }
 }

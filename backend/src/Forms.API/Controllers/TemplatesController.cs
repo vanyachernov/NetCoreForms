@@ -1,3 +1,7 @@
+using Forms.API.Controllers.Shared;
+using Forms.API.Extensions;
+using Forms.API.Response;
+using Forms.Application.TemplateDir.AddQuestion;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +10,10 @@ namespace Forms.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TemplatesController : ControllerBase
+public class TemplatesController : ApplicationController
 {
     [HttpPost]
-    public async Task<Guid> Create(
+    public async Task<ActionResult<Guid>> Create(
         [FromBody] CreateTemplateRequest request,
         [FromServices] CreateTemplateHandler template,
         CancellationToken cancellationToken = default)
@@ -18,32 +22,39 @@ public class TemplatesController : ControllerBase
             request,
             cancellationToken);
 
-        return createTemplateResult.Value;
+        return Ok(createTemplateResult.Value);
     }
     
     [HttpPost("questions")]
-    public async Task<Guid> AddQuestion(
-        [FromBody] CreateTemplateRequest request,
-        [FromServices] CreateTemplateHandler template,
+    public async Task<ActionResult<Guid>> AddQuestion(
+        [FromBody] AddQuestionRequest request,
+        [FromServices] AddQuestionHandler template,
         CancellationToken cancellationToken = default)
     {
         var createTemplateResult = await template.Handle(
             request,
             cancellationToken);
 
-        return createTemplateResult.Value;
+        return Ok(createTemplateResult.Value);
     }
     
     [HttpGet("{templateId:guid}/questions")]
-    public async Task<IEnumerable<GetQuestionsResponse>> GetQuestions(
+    public async Task<ActionResult> GetQuestions(
         [FromRoute] Guid templateId,
-        [FromServices] GetQuestionsHandler questions,
+        [FromServices] GetQuestionsHandler questionsHandler,
         CancellationToken cancellationToken = default)
     {
-        var questionsTemplateResult = await questions.Handle(
-            templateId,
+        var questionsTemplateResult = await questionsHandler.Handle(
+            templateId, 
             cancellationToken);
-
-        return questionsTemplateResult;
+        
+        if (questionsTemplateResult.IsFailure)
+        {
+            return questionsTemplateResult.Error
+                .ToResponse();
+        }
+        
+        return Ok(Envelope.Ok(questionsTemplateResult.Value));
     }
+
 }

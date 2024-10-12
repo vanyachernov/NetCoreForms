@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using Forms.Application.DTOs;
 using Forms.Application.UserDir;
 using Forms.Application.UserDir.GetUsers;
+using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,14 @@ namespace Forms.Infrastructure.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
+        private readonly TemplateDbContext _templateContext;
         private readonly UserManager<User> _userManager;
 
-        public UsersRepository(UserManager<User> userManager)
+        public UsersRepository(
+            TemplateDbContext templateContext,
+            UserManager<User> userManager)
         {
+            _templateContext = templateContext;
             _userManager = userManager;
         }
 
@@ -34,6 +39,20 @@ namespace Forms.Infrastructure.Repositories
             }).ToList();
 
             return Result.Success<IEnumerable<GetUsersResponse>>(userListResponse);
+        }
+
+        public async Task<Result<string, Error>> GetUserRole(
+            Guid userId, 
+            CancellationToken cancellationToken = default)
+        {
+            var role = await _templateContext.UserRoles
+                .Where(ur => ur.UserId == userId.ToString())
+                .Select(ur => ur.RoleId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return role == null 
+                ? Errors.General.NotFound(userId)
+                : role;
         }
     }
 }

@@ -14,9 +14,17 @@ public class User : IdentityUser
     }
 
     public FullName FullName { get; private set; } = default!;
+    public RefreshToken? RefreshToken { get; private set; }
+    public RefreshTokenExpiryTime? RefreshTokenExpiryTime { get; private set; }
     
-    public void SetEmail(Email email) => Email = email.Value;
-    public void SetUsername(string username) => UserName = username;
+    public void SetEmail(Email email) => 
+        Email = email.Value;
+    public void SetUsername(string username) => 
+        UserName = username;
+    public void SetRefreshToken(RefreshToken token) => 
+        RefreshToken = token; 
+    public void SetRefreshTokenExpityTime(RefreshTokenExpiryTime tokenTime) => 
+        RefreshTokenExpiryTime = tokenTime; 
 
     public static Result<User> Create(FullName fullName)
     {

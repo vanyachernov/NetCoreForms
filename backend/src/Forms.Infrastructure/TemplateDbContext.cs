@@ -9,7 +9,6 @@ namespace Forms.Infrastructure;
 public class TemplateDbContext : IdentityDbContext<User>
 {
     private readonly IConfiguration _configuration;
-    private const string DATABASE = nameof(Database);
 
     public TemplateDbContext(
         IConfiguration configuration, 
@@ -25,12 +24,27 @@ public class TemplateDbContext : IdentityDbContext<User>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
+        if (optionsBuilder.IsConfigured)
         {
-            optionsBuilder
-                .UseNpgsql(_configuration.GetConnectionString(DATABASE))
-                .UseSnakeCaseNamingConvention();
+            return;
         }
+        
+        var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+        var dbPort = Environment.GetEnvironmentVariable("DB_PORT");
+        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+        var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+        var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        
+        var connectionString = $"Host={dbServer};" +
+                               $"Port={dbPort};" +
+                               $"Database={dbName};" +
+                               $"Username={dbUser};" +
+                               $"Password={dbPassword};" +
+                               "SSL Mode=Require;" +
+                               "Trust Server Certificate=true;";
+        optionsBuilder
+            .UseNpgsql(connectionString)
+            .UseSnakeCaseNamingConvention();
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

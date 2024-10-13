@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forms.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    [Migration("20241010071331_Initial")]
+    [Migration("20241012141246_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -530,6 +530,53 @@ namespace Forms.Infrastructure.Migrations
                         .HasConstraintName("fk_questions_templates_template_id");
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Forms.Domain.TemplateManagement.Entities.User", b =>
+                {
+                    b.OwnsOne("Forms.Domain.TemplateManagement.ValueObjects.RefreshToken", "RefreshToken", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("text")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("text")
+                                .HasColumnName("RefreshToken");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("AspNetUsers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId")
+                                .HasConstraintName("fk_users_users_id");
+                        });
+
+                    b.OwnsOne("Forms.Domain.TemplateManagement.ValueObjects.RefreshTokenExpiryTime", "RefreshTokenExpiryTime", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("text")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("Value")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("RefreshTokenExpiryTime")
+                                .HasDefaultValueSql("NOW()");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("AspNetUsers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId")
+                                .HasConstraintName("fk_users_users_id");
+                        });
+
+                    b.Navigation("RefreshToken");
+
+                    b.Navigation("RefreshTokenExpiryTime");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

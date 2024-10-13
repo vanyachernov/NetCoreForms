@@ -1,5 +1,6 @@
 using Forms.Application.TemplateDir;
 using Forms.Application.UserDir;
+using Forms.Infrastructure.Providers;
 using Forms.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,10 @@ public static class Inject
         services.AddScoped<ITemplatesRepository, TemplatesRepository>();
         
         services.AddScoped<IUsersRepository, UsersRepository>();
+
+        services.AddScoped<ITokensRepository, TokensRepository>();
+        
+        services.AddScoped<JwtHandler>();
         
         return services;
     }

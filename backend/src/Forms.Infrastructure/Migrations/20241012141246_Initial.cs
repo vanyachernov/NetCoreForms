@@ -31,6 +31,8 @@ namespace Forms.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
+                    RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "NOW()"),
                     full_name_first_name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     full_name_last_name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

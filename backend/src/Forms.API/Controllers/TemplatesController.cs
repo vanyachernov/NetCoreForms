@@ -25,13 +25,15 @@ public class TemplatesController : ApplicationController
         return Ok(createTemplateResult.Value);
     }
     
-    [HttpPost("questions")]
+    [HttpPost("questions/{questionId:guid}")]
     public async Task<ActionResult<Guid>> AddQuestion(
+        [FromRoute] Guid questionId,
         [FromBody] AddQuestionRequest request,
         [FromServices] AddQuestionHandler template,
         CancellationToken cancellationToken = default)
     {
         var createTemplateResult = await template.Handle(
+            questionId,
             request,
             cancellationToken);
 

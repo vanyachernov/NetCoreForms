@@ -1,4 +1,5 @@
 using Forms.API;
+using Forms.API.Extensions;
 using Forms.Application;
 using Forms.Application.Identity.Admin;
 using Forms.Application.Identity.Roles;
@@ -36,6 +37,8 @@ var app = builder.Build();
         
         await adminService.Handle();
     }
+
+    app.UseExceptionLogMiddleware();
     
     app.UseAuthentication();
 

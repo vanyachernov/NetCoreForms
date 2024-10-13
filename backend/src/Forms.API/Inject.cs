@@ -12,6 +12,8 @@ public static class Inject
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
         DotNetEnv.Env.Load();
+
+        services.AddEndpointsApiExplorer();
         
         services
             .AddEndpointsApiExplorer()

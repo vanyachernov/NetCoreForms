@@ -19,5 +19,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 .HasMaxLength(Constants.MAX_FULL_NAME_TEXT_LENGTH)
                 .IsRequired();
         });
+
+        builder.OwnsOne(u => u.RefreshToken, ub =>
+        {
+            ub.Property(ubb => ubb.Value)
+                .HasColumnName("RefreshToken")
+                .IsRequired(false);
+        });
+
+        builder.OwnsOne(u => u.RefreshTokenExpiryTime, ub =>
+        {
+            ub.Property(ubb => ubb.Value)
+                .HasColumnName("RefreshTokenExpiryTime")
+                .HasDefaultValueSql("NOW()")
+                .IsRequired();
+        });
     }
 }

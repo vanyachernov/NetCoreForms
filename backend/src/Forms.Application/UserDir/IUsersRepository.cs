@@ -19,7 +19,7 @@ public interface IUsersRepository
     /// </summary>
     /// <param name="userId">User identifier.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
-    /// <returns>A <see cref="Task{Result{string}}"/>.</returns>
+    /// <returns>User role.</returns>
     Task<Result<string, Error>> GetUserRole(
         Guid userId, 
         CancellationToken cancellationToken = default);

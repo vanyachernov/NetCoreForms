@@ -9,44 +9,51 @@ using Forms.Application.UserDir;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Entities;
 using Forms.Domain.TemplateManagement.ValueObjects;
+using Forms.Infrastructure.Providers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Forms.Infrastructure.Providers;
+namespace Forms.Infrastructure.Repositories;
 
-public class JwtHandler
+public class TokensRepository : ITokensRepository
 {
+    private readonly string _jwtSecurityKey;
     private readonly string _jwtValidIssuer;
     private readonly string _jwtValidAudience;
-    private readonly string _jwtSecurityKey;
     private readonly double _jwtExpiryInMinutes;
+    private readonly JwtHandler _jwtHandler;
+    private readonly UserManager<User> _userManager;
     private readonly IUsersRepository _usersRepository;
-    private readonly UserManager<User> _usersManager;
+    
+    private User? _user;
 
-    public JwtHandler(
-        IUsersRepository usersRepository,
-        UserManager<User> usersManager)
+    public TokensRepository(
+        UserManager<User> userManager,
+        JwtHandler jwtHandler,
+        IUsersRepository usersRepository)
     {
-         Env.Load();
+        Env.Load();
 
-         _jwtValidIssuer = Env.GetString("JWT_ISSUER");
-         _jwtValidAudience = Env.GetString("JWT_AUDIENCE");
-         _jwtSecurityKey = Env.GetString("JWT_SECRET");
+        _jwtValidIssuer = Env.GetString("JWT_ISSUER");
+        _jwtValidAudience = Env.GetString("JWT_AUDIENCE");
+        _jwtSecurityKey = Env.GetString("JWT_SECRET");
 
-         if (!double.TryParse(
-                 Env.GetString("JWT_EXPIRY_IN_MINUTES"), 
-                 out _jwtExpiryInMinutes))
-         {
-             throw new InvalidOperationException("JWT expiry time is not configured correctly.");
-         }
+        if (!double.TryParse(
+                Env.GetString("JWT_EXPIRY_IN_MINUTES"),
+                out _jwtExpiryInMinutes))
+        {
+            throw new InvalidOperationException("JWT expiry time is not configured correctly.");
+        }
 
-         _usersRepository = usersRepository;
-         _usersManager = usersManager;
+        _userManager = userManager;
+        _jwtHandler = jwtHandler;
+        _usersRepository = usersRepository;
     }
 
     public async Task<Result<TokenDto, Error>> CreateToken(
         User user, 
-        bool populateExp)
+        bool populateExp, 
+        CancellationToken cancellationToken = default)
     {
         var signingCredentials = GetSigningCredentials();
         var claims = await GetClaims(user);
@@ -77,12 +84,41 @@ public class JwtHandler
             user.SetRefreshTokenExpityTime(refreshTokenExpiryTime.Value);
         }
 
-        await _usersManager.UpdateAsync(user);
+        await _userManager.UpdateAsync(user);
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
         return new TokenDto(accessToken, refreshToken.Value.Value);
     }
+
+    public async Task<Result<TokenDto, Error>> RefreshToken(
+        User user,
+        TokenDto tokenDto, 
+        CancellationToken cancellationToken = default)
+    {
+        var principal = _jwtHandler.GetPrincipalFromExpiredTone(tokenDto.AccessToken);
+
+        if (user.RefreshToken.Value != tokenDto.RefreshToken || 
+            user.RefreshTokenExpiryTime.Value <= DateTime.UtcNow)
+        {
+            throw new SecurityTokenException("Invalid refresh token or token expired.");
+        }
+
+        _user = user;
+
+        var createTokenResult = await CreateToken(
+            user, 
+            populateExp: false, 
+            cancellationToken);
+
+        if (createTokenResult.IsFailure)
+        {
+            return Errors.General.ValueIsInvalid("CreatedToken");
+        }
+
+        return createTokenResult;
+    }
+    
 
     private SigningCredentials GetSigningCredentials()
     {
@@ -141,7 +177,7 @@ public class JwtHandler
         return Convert.ToBase64String(randomNumber);
     }
 
-    public ClaimsPrincipal GetPrincipalFromExpiredTone(string token)
+    private ClaimsPrincipal GetPrincipalFromExpiredTone(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {

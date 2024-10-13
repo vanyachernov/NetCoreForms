@@ -15,6 +15,8 @@ public static class Inject
         services.AddScoped<ITemplatesRepository, TemplatesRepository>();
         
         services.AddScoped<IUsersRepository, UsersRepository>();
+
+        services.AddScoped<ITokensRepository, TokensRepository>();
         
         services.AddScoped<JwtHandler>();
         

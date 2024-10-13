@@ -1,0 +1,14 @@
+﻿services:
+  backend-service:
+    container_name: backend
+    image: back-service
+    build:
+      context: ./backend/src
+    env_file:
+      - ./backend/src/Forms.API/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8001:5181"
+volumes:
+  postgres-data:

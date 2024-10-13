@@ -42,6 +42,7 @@ public class TemplateDbContext : IdentityDbContext<User>
                                $"Password={dbPassword};" +
                                "SSL Mode=Require;" +
                                "Trust Server Certificate=true;";
+        
         optionsBuilder
             .UseNpgsql(connectionString)
             .UseSnakeCaseNamingConvention();

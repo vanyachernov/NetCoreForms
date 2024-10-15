@@ -17,7 +17,8 @@ public class Instance : Shared.Entity<InstanceId>
         InstanceId id,
         Template template,
         User respondent,
-        DateTime createdAt) : base(id)
+        DateTime createdAt,
+        DateTime finishedAt) : base(id)
     {
         Template = template;
         Respondent = respondent;
@@ -27,7 +28,8 @@ public class Instance : Shared.Entity<InstanceId>
 
     public Template Template { get; private set; } = default!;
     public User Respondent { get; private set; } = default!;
-    public DateTime CreatedAt { get; private set; } = default!;
+    public DateTime CreatedAt { get; private set; }
+    public DateTime FinishedAt { get; private set; }
     public IReadOnlyCollection<Answer> Answers => _answers;
 
     public void AddAnswer(Answer answer) => _answers.Add(answer);
@@ -36,12 +38,14 @@ public class Instance : Shared.Entity<InstanceId>
         InstanceId id,
         Template template,
         User respondent,
-        DateTime createdAt)
+        DateTime createdAt,
+        DateTime finishedAt)
     {
         return new Instance(
             id, 
             template,
             respondent,
-            createdAt);
+            createdAt,
+            finishedAt);
     }
 }

@@ -20,6 +20,11 @@ public class TemplateConfiguration : IEntityTypeConfiguration<Template>
                 id => id.Value,
                 value => TemplateId.Create(value));
 
+        builder.HasOne(t => t.Owner)
+            .WithMany()
+            .HasForeignKey("owner_id")
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.ComplexProperty(t => t.Title, tb =>
         {
             tb.Property(tbb => tbb.Value)
@@ -34,5 +39,10 @@ public class TemplateConfiguration : IEntityTypeConfiguration<Template>
                 .HasColumnName("description")
                 .IsRequired();
         });
+        
+        builder.HasMany(t => t.Roles)
+            .WithOne(tr => tr.Template)
+            .HasForeignKey(tr => tr.TemplateId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

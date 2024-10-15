@@ -23,13 +23,15 @@ public class TemplatesController : ApplicationController
         return Ok(templatesResult.Value);
     }
     
-    [HttpPost]
+    [HttpPost("{userId:guid}")]
     public async Task<ActionResult<Guid>> Create(
+        [FromRoute] Guid userId,
         [FromBody] CreateTemplateRequest request,
         [FromServices] CreateTemplateHandler template,
         CancellationToken cancellationToken = default)
     {
         var createTemplateResult = await template.Handle(
+            userId,
             request,
             cancellationToken);
 

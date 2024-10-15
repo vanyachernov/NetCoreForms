@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
@@ -8,6 +9,14 @@ namespace Forms.Application.TemplateDir;
 
 public interface ITemplatesRepository
 {
+    /// <summary>
+    /// Return a list of templates.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{Template}"/>.</returns>
+    Task<Result<IEnumerable<GetTemplatesResponse>, Error>> Get(
+        CancellationToken cancellationToken = default);
+    
     /// <summary>
     /// Create template.
     /// </summary>

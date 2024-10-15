@@ -3,6 +3,7 @@ using Forms.Application.Identity.Roles;
 using Forms.Application.TemplateDir.AddQuestion;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Application.UserDir.GetUsers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,8 @@ public static class Inject
         services.AddScoped<GetUsersHandler>();
         
         services.AddScoped<CreateTemplateHandler>();
+        
+        services.AddScoped<GetTemplatesHandler>();
         
         services.AddScoped<GetQuestionsHandler>();
             

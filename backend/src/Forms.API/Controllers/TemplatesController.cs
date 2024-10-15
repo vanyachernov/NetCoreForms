@@ -4,6 +4,7 @@ using Forms.API.Response;
 using Forms.Application.TemplateDir.AddQuestion;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forms.API.Controllers;
@@ -12,6 +13,16 @@ namespace Forms.API.Controllers;
 [Route("[controller]")]
 public class TemplatesController : ApplicationController
 {
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<GetTemplatesResponse>>> Get(
+        [FromServices] GetTemplatesHandler template,
+        CancellationToken cancellationToken = default)
+    {
+        var templatesResult = await template.Handle(cancellationToken);
+
+        return Ok(templatesResult.Value);
+    }
+    
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(
         [FromBody] CreateTemplateRequest request,

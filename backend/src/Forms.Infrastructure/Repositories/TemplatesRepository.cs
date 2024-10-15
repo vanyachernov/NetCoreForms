@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using Forms.Application.DTOs;
 using Forms.Application.TemplateDir;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
@@ -17,7 +18,32 @@ public class TemplatesRepository : ITemplatesRepository
     {
         _templateContext = context;
     }
-    
+
+    public async Task<Result<IEnumerable<GetTemplatesResponse>, Error>> Get(
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var templates = await _templateContext
+                .Templates
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            var response = templates.Select(template => new GetTemplatesResponse
+            {
+                Id = template.Id,
+                Title = new TitleDto(template.Title.Value),
+                Description = new DescriptionDto(template.Description.Value)
+            });
+
+            return Result.Success<IEnumerable<GetTemplatesResponse>, Error>(response);
+        }
+        catch (Exception ex)
+        {
+            return Errors.General.NotFound();
+        }
+    }
+
     public async Task<Result<Guid, Error>> Create(
         Template template, 
         CancellationToken cancellationToken = default)

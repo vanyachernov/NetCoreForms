@@ -16,6 +16,16 @@ public interface ITemplatesRepository
     /// <returns>A <see cref="Task{Template}"/>.</returns>
     Task<Result<IEnumerable<GetTemplatesResponse>, Error>> Get(
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Return a template by identifier.
+    /// </summary>
+    /// <param name="templateId">A template identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{Template}"/>.</returns>
+    Task<Result<GetTemplatesResponse, Error>> GetById(
+        Guid templateId,
+        CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Create template.
@@ -55,5 +65,15 @@ public interface ITemplatesRepository
     /// <returns>A <see cref="Task{User}"/>.</returns>
     Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
         Guid templateId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Add user access to template.
+    /// </summary>
+    /// <param name="roles">Template roles.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{User}"/>.</returns>
+    Task<Result<Guid, Error>> AddUserAccess(
+        TemplateRoles roles, 
         CancellationToken cancellationToken = default);
 }

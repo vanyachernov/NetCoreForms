@@ -6,7 +6,6 @@ namespace Forms.Application.TemplateDir.AddQuestion;
 public class AddQuestionHandler(ITemplatesRepository templateRepository)
 {
     public async Task<Result<Guid>> Handle(
-        Guid questionId,
         AddQuestionRequest request,
         CancellationToken cancellationToken = default)
     {

@@ -44,6 +44,30 @@ public class TemplatesRepository : ITemplatesRepository
         }
     }
 
+    public async Task<Result<GetTemplatesResponse, Error>> GetById(
+        Guid templateId, 
+        CancellationToken cancellationToken = default)
+    {
+        var template = await _templateContext.Templates
+            .FirstOrDefaultAsync(t => 
+                t.Id == templateId, 
+                cancellationToken: cancellationToken);
+
+        if (template is null)
+        {
+            return Errors.General.NotFound();
+        }
+
+        var response = new GetTemplatesResponse
+        {
+            Id = template.Id,
+            Title = new TitleDto(template.Title.Value),
+            Description = new DescriptionDto(template.Description.Value)
+        };
+
+        return response;
+    }
+
     public async Task<Result<Guid, Error>> Create(
         Template template, 
         CancellationToken cancellationToken = default)
@@ -119,5 +143,16 @@ public class TemplatesRepository : ITemplatesRepository
         }).ToList();
         
         return await Task.WhenAll(questionResponses);
+    }
+
+    public async Task<Result<Guid, Error>> AddUserAccess(
+        TemplateRoles roles, 
+        CancellationToken cancellationToken = default)
+    {
+        await _templateContext.TemplateRoles.AddAsync(
+            roles, 
+            cancellationToken);
+
+        return roles.Id.Value;
     }
 }

@@ -2,8 +2,10 @@ using Forms.API.Controllers.Shared;
 using Forms.API.Extensions;
 using Forms.API.Response;
 using Forms.Application.TemplateDir.AddQuestion;
+using Forms.Application.TemplateDir.AddUserAccessToTemplate;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplate;
 using Forms.Application.TemplateDir.GetTemplates;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,15 +24,29 @@ public class TemplatesController : ApplicationController
 
         return Ok(templatesResult.Value);
     }
+
+    [HttpGet("{templateId:guid}")]
+    public async Task<ActionResult<GetTemplatesResponse>> GetTemplateById(
+        [FromRoute] Guid templateId,
+        [FromServices] GetTemplateHandler template,
+        CancellationToken cancellationToken = default)
+    {
+        var templateResult = await template.Handle(
+            templateId,
+            cancellationToken);
+
+        return Ok(templateResult.Value);
+    }
     
     [HttpPost("{userId:guid}")]
     public async Task<ActionResult<Guid>> Create(
         [FromRoute] Guid userId,
         [FromBody] CreateTemplateRequest request,
-        [FromServices] CreateTemplateHandler template,
+        [FromServices] CreateTemplateHandler templateHandler,
+        [FromServices] AddUserAccessToTemplateHandler accessHandler,
         CancellationToken cancellationToken = default)
     {
-        var createTemplateResult = await template.Handle(
+        var createTemplateResult = await templateHandler.Handle(
             userId,
             request,
             cancellationToken);
@@ -38,15 +54,13 @@ public class TemplatesController : ApplicationController
         return Ok(createTemplateResult.Value);
     }
     
-    [HttpPost("questions/{questionId:guid}")]
+    [HttpPost("questions")]
     public async Task<ActionResult<Guid>> AddQuestion(
-        [FromRoute] Guid questionId,
         [FromBody] AddQuestionRequest request,
         [FromServices] AddQuestionHandler template,
         CancellationToken cancellationToken = default)
     {
         var createTemplateResult = await template.Handle(
-            questionId,
             request,
             cancellationToken);
 
@@ -69,7 +83,7 @@ public class TemplatesController : ApplicationController
                 .ToResponse();
         }
         
-        return Ok(Envelope.Ok(questionsTemplateResult.Value));
+        return Ok(questionsTemplateResult.Value);
     }
 
 }

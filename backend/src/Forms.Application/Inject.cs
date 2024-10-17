@@ -1,8 +1,11 @@
 using Forms.Application.Identity.Admin;
 using Forms.Application.Identity.Roles;
 using Forms.Application.TemplateDir.AddQuestion;
+using Forms.Application.TemplateDir.AddUserAccessToTemplate;
 using Forms.Application.TemplateDir.Create;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplate;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Application.UserDir.GetUsers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +25,13 @@ public static class Inject
         
         services.AddScoped<CreateTemplateHandler>();
         
+        services.AddScoped<GetTemplatesHandler>();
+        
+        services.AddScoped<GetTemplateHandler>();
+        
         services.AddScoped<GetQuestionsHandler>();
+        
+        services.AddScoped<AddUserAccessToTemplateHandler>();
             
         return services;
     }

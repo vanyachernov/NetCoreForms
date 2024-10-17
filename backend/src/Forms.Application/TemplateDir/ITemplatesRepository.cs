@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
@@ -8,6 +9,24 @@ namespace Forms.Application.TemplateDir;
 
 public interface ITemplatesRepository
 {
+    /// <summary>
+    /// Return a list of templates.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{Template}"/>.</returns>
+    Task<Result<IEnumerable<GetTemplatesResponse>, Error>> Get(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Return a template by identifier.
+    /// </summary>
+    /// <param name="templateId">A template identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{Template}"/>.</returns>
+    Task<Result<GetTemplatesResponse, Error>> GetById(
+        Guid templateId,
+        CancellationToken cancellationToken = default);
+    
     /// <summary>
     /// Create template.
     /// </summary>
@@ -46,5 +65,15 @@ public interface ITemplatesRepository
     /// <returns>A <see cref="Task{User}"/>.</returns>
     Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
         Guid templateId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Add user access to template.
+    /// </summary>
+    /// <param name="roles">Template roles.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{User}"/>.</returns>
+    Task<Result<Guid, Error>> AddUserAccess(
+        TemplateRoles roles, 
         CancellationToken cancellationToken = default);
 }

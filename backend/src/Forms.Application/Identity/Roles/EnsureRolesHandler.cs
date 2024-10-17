@@ -6,7 +6,7 @@ public class EnsureRolesHandler(RoleManager<IdentityRole> roleManager)
 {
     public async Task Handle()
     {
-        var roles = new[] { "Admin", "Creator", "Reader" };
+        var roles = new[] { "Admin" };
 
         foreach (var role in roles)
         {

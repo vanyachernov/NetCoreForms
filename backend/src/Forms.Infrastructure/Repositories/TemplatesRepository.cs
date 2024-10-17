@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using Forms.Application.DTOs;
 using Forms.Application.TemplateDir;
 using Forms.Application.TemplateDir.GetQuestions;
+using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Aggregate;
 using Forms.Domain.TemplateManagement.Entities;
@@ -17,7 +18,70 @@ public class TemplatesRepository : ITemplatesRepository
     {
         _templateContext = context;
     }
-    
+
+    public async Task<Result<IEnumerable<GetTemplatesResponse>, Error>> Get(
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var templates = await _templateContext.Templates
+                .Include(t => t.Owner)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            var response = templates.Select(template => new GetTemplatesResponse
+            {
+                Id = template.Id,
+                Owner = new UserDto(
+                    template.Owner.Id, 
+                    template.Owner.Email!,
+                    new FullNameDto(
+                        template.Owner.FullName.LastName, 
+                        template.Owner.FullName.FirstName)),
+                Title = new TitleDto(template.Title.Value),
+                Description = new DescriptionDto(template.Description.Value)
+            });
+
+            return response.ToList();
+        }
+        catch (Exception ex)
+        {
+            return Errors.General.ValueIsInvalid("Templates getting operation");
+        }
+    }
+
+    public async Task<Result<GetTemplatesResponse, Error>> GetById(
+        Guid templateId, 
+        CancellationToken cancellationToken = default)
+    {
+        var template = await _templateContext.Templates
+            .Include(t => t.Owner)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => 
+                t.Id == templateId, 
+                cancellationToken: cancellationToken);
+
+        if (template is null)
+        {
+            return Errors.General.NotFound();
+        }
+
+        var response = new GetTemplatesResponse
+        {
+            Id = template.Id,
+            Owner = new UserDto(
+                template.Owner.Id, 
+                template.Owner.Email,
+                new FullNameDto(
+                    template.Owner.FullName.LastName, 
+                    template.Owner.FullName.FirstName)),
+            Title = new TitleDto(template.Title.Value),
+            Description = new DescriptionDto(template.Description.Value)
+        };
+
+        return response;
+    }
+
     public async Task<Result<Guid, Error>> Create(
         Template template, 
         CancellationToken cancellationToken = default)
@@ -29,7 +93,7 @@ public class TemplatesRepository : ITemplatesRepository
 
         await _templateContext.SaveChangesAsync(cancellationToken);
         
-        return Result.Success<Guid, Error>(template.Id.Value);
+        return template.Id.Value;
     }
 
     public async Task<Result<bool, Error>> IsExists(
@@ -44,7 +108,7 @@ public class TemplatesRepository : ITemplatesRepository
         var isTemplateExists = template != null;
         
         return isTemplateExists 
-            ? Result.Success<bool, Error>(isTemplateExists)
+            ? isTemplateExists
             : Errors.General.NotFound(templateId);
     }
 
@@ -56,7 +120,7 @@ public class TemplatesRepository : ITemplatesRepository
             question, 
             cancellationToken);
 
-        return Result.Success<Guid, Error>(question.Id);
+        return question.Id.Value;
     }
 
     public async Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
@@ -93,5 +157,18 @@ public class TemplatesRepository : ITemplatesRepository
         }).ToList();
         
         return await Task.WhenAll(questionResponses);
+    }
+
+    public async Task<Result<Guid, Error>> AddUserAccess(
+        TemplateRoles roles, 
+        CancellationToken cancellationToken = default)
+    {
+        await _templateContext.TemplateRoles.AddAsync(
+            roles, 
+            cancellationToken);
+
+        await _templateContext.SaveChangesAsync(cancellationToken);
+        
+        return roles.Id.Value;
     }
 }

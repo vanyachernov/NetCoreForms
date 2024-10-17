@@ -15,14 +15,7 @@ public class GetQuestionsHandler(ITemplatesRepository templateRepository)
         
         if (templateExistsResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
-                templateExistsResult.Error);
-        }
-        
-        if (!templateExistsResult.Value)
-        {
-            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
-                Errors.General.NotFound(templateId));
+            return Errors.General.NotFound();
         }
         
         var questionsResult = await templateRepository.GetQuestions(
@@ -31,12 +24,10 @@ public class GetQuestionsHandler(ITemplatesRepository templateRepository)
         
         if (questionsResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<GetQuestionsResponse>, Error>(
-                questionsResult.Error);
+            return Errors.General.ValueIsInvalid("Questions");
         }
         
-        return Result.Success<IEnumerable<GetQuestionsResponse>, Error>(
-            questionsResult.Value);
+        return questionsResult.Value.ToList();
     }
 
 }

@@ -16,7 +16,7 @@ public class GetTemplateHandler(ITemplatesRepository templateRepository)
 
         if (templateResult.IsFailure)
         {
-            Errors.General.NotFound();
+            return Errors.General.NotFound();
         }
 
         return templateResult.Value;

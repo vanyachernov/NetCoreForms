@@ -30,7 +30,7 @@ public class CreateTemplateHandler
         
         if (user == null)
         {
-            Errors.General.NotFound();
+            return Errors.General.NotFound();
         }
         
         var templateTitle = Title.Create(request.Title.Value);

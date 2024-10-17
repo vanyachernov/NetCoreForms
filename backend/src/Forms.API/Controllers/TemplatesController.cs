@@ -29,7 +29,9 @@ public class TemplatesController : ApplicationController
     {
         var templatesResult = await template.Handle(cancellationToken);
 
-        return Ok(templatesResult.Value);
+        return templatesResult.IsFailure 
+            ? templatesResult.Error.ToResponse() 
+            : Ok(templatesResult.Value);
     }
 
     /// <summary>
@@ -76,8 +78,19 @@ public class TemplatesController : ApplicationController
             request,
             cancellationToken);
 
-        return createTemplateResult.IsFailure 
-            ? createTemplateResult.Error.ToResponse() 
+        if (createTemplateResult.IsFailure)
+        {
+            createTemplateResult.Error.ToResponse();
+        }
+        
+        var roleResult = await accessHandler.Handle(
+            userId, 
+            createTemplateResult.Value, 
+            TemplateRole.Owner, 
+            cancellationToken);
+
+        return roleResult.IsFailure 
+            ? roleResult.Error.ToResponse()
             : Ok(createTemplateResult.Value);
     }
     

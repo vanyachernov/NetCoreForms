@@ -34,14 +34,14 @@ public class AddUserAccessToTemplateHandler
 
         if (templateResult.IsFailure)
         {
-            Errors.General.NotFound();
+            return Errors.General.NotFound();
         } ;
 
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
         if (user is null)
         {
-            Errors.General.NotFound();
+            return Errors.General.NotFound();
         }
 
         var templateResultValue = templateResult.Value;
@@ -54,7 +54,7 @@ public class AddUserAccessToTemplateHandler
 
         if (newTemplateResult.IsFailure)
         {
-            Errors.General.ValueIsInvalid("Template");
+            return Errors.General.ValueIsInvalid("Template");
         }
         
         var newRoleResult = TemplateRoles.Create(
@@ -65,7 +65,7 @@ public class AddUserAccessToTemplateHandler
 
         if (newRoleResult.IsFailure)
         {
-            Errors.General.ValueIsInvalid("New access role");
+            return Errors.General.ValueIsInvalid("New access role");
         }
         
         await _templateRepository.AddUserAccess(

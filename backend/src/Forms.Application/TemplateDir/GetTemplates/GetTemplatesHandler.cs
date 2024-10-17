@@ -13,11 +13,9 @@ public class GetTemplatesHandler(ITemplatesRepository templateRepository)
 
         if (templatesResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<GetTemplatesResponse>, Error>(
-                templatesResult.Error);
+            return Errors.General.ValueIsInvalid();
         }
 
-        return Result.Success<IEnumerable<GetTemplatesResponse>, Error>(
-            templatesResult.Value);
+        return templatesResult.Value.ToList();
     }
 }

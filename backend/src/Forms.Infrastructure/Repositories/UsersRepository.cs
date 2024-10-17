@@ -4,7 +4,6 @@ using Forms.Application.UserDir;
 using Forms.Application.UserDir.GetUsers;
 using Forms.Domain.Shared;
 using Forms.Domain.TemplateManagement.Entities;
-using Forms.Infrastructure.Providers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,7 +38,7 @@ namespace Forms.Infrastructure.Repositories
                     user.FullName.LastName)
             }).ToList();
 
-            return Result.Success<IEnumerable<GetUsersResponse>>(userListResponse);
+            return userListResponse.ToList();
         }
 
         public async Task<Result<string, Error>> GetUserRole(

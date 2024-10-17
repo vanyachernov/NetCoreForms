@@ -24,23 +24,29 @@ public class TemplatesRepository : ITemplatesRepository
     {
         try
         {
-            var templates = await _templateContext
-                .Templates
+            var templates = await _templateContext.Templates
+                .Include(t => t.Owner)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             var response = templates.Select(template => new GetTemplatesResponse
             {
                 Id = template.Id,
+                Owner = new UserDto(
+                    template.Owner.Id, 
+                    template.Owner.Email!,
+                    new FullNameDto(
+                        template.Owner.FullName.LastName, 
+                        template.Owner.FullName.FirstName)),
                 Title = new TitleDto(template.Title.Value),
                 Description = new DescriptionDto(template.Description.Value)
             });
 
-            return Result.Success<IEnumerable<GetTemplatesResponse>, Error>(response);
+            return response.ToList();
         }
         catch (Exception ex)
         {
-            return Errors.General.NotFound();
+            return Errors.General.ValueIsInvalid("Templates getting operation");
         }
     }
 
@@ -49,6 +55,8 @@ public class TemplatesRepository : ITemplatesRepository
         CancellationToken cancellationToken = default)
     {
         var template = await _templateContext.Templates
+            .Include(t => t.Owner)
+            .AsNoTracking()
             .FirstOrDefaultAsync(t => 
                 t.Id == templateId, 
                 cancellationToken: cancellationToken);
@@ -61,6 +69,12 @@ public class TemplatesRepository : ITemplatesRepository
         var response = new GetTemplatesResponse
         {
             Id = template.Id,
+            Owner = new UserDto(
+                template.Owner.Id, 
+                template.Owner.Email,
+                new FullNameDto(
+                    template.Owner.FullName.LastName, 
+                    template.Owner.FullName.FirstName)),
             Title = new TitleDto(template.Title.Value),
             Description = new DescriptionDto(template.Description.Value)
         };
@@ -79,7 +93,7 @@ public class TemplatesRepository : ITemplatesRepository
 
         await _templateContext.SaveChangesAsync(cancellationToken);
         
-        return Result.Success<Guid, Error>(template.Id.Value);
+        return template.Id.Value;
     }
 
     public async Task<Result<bool, Error>> IsExists(
@@ -94,7 +108,7 @@ public class TemplatesRepository : ITemplatesRepository
         var isTemplateExists = template != null;
         
         return isTemplateExists 
-            ? Result.Success<bool, Error>(isTemplateExists)
+            ? isTemplateExists
             : Errors.General.NotFound(templateId);
     }
 
@@ -106,7 +120,7 @@ public class TemplatesRepository : ITemplatesRepository
             question, 
             cancellationToken);
 
-        return Result.Success<Guid, Error>(question.Id);
+        return question.Id.Value;
     }
 
     public async Task<Result<IEnumerable<GetQuestionsResponse>, Error>> GetQuestions(
@@ -153,6 +167,8 @@ public class TemplatesRepository : ITemplatesRepository
             roles, 
             cancellationToken);
 
+        await _templateContext.SaveChangesAsync(cancellationToken);
+        
         return roles.Id.Value;
     }
 }

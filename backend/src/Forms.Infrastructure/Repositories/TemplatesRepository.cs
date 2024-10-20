@@ -82,6 +82,39 @@ public class TemplatesRepository : ITemplatesRepository
         return response;
     }
 
+    public async Task<Result<IEnumerable<GetTemplatesResponse>, Error>> GetByUserId(
+        Guid userId, 
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var templates = await _templateContext.Templates
+                .Include(t => t.Owner)
+                .Where(t => t.Owner.Id == userId.ToString())
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            var response = templates.Select(template => new GetTemplatesResponse
+            {
+                Id = template.Id,
+                Owner = new UserDto(
+                    template.Owner.Id, 
+                    template.Owner.Email!,
+                    new FullNameDto(
+                        template.Owner.FullName.LastName, 
+                        template.Owner.FullName.FirstName)),
+                Title = new TitleDto(template.Title.Value),
+                Description = new DescriptionDto(template.Description.Value)
+            });
+
+            return response.ToList();
+        }
+        catch (Exception ex)
+        {
+            return Errors.General.ValueIsInvalid("Templates getting operation");
+        }
+    }
+
     public async Task<Result<Guid, Error>> Create(
         Template template, 
         CancellationToken cancellationToken = default)

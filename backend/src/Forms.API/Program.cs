@@ -39,6 +39,8 @@ var app = builder.Build();
     }
 
     app.UseExceptionLogMiddleware();
+
+    app.UseCors();
     
     app.UseAuthentication();
 

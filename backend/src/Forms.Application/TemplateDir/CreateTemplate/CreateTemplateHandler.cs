@@ -6,7 +6,7 @@ using Forms.Domain.TemplateManagement.Entities;
 using Forms.Domain.TemplateManagement.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace Forms.Application.TemplateDir.Create;
+namespace Forms.Application.TemplateDir.CreateTemplate;
 
 public class CreateTemplateHandler
 {

@@ -28,6 +28,16 @@ public interface ITemplatesRepository
         CancellationToken cancellationToken = default);
     
     /// <summary>
+    /// Return a template by user identifier.
+    /// </summary>
+    /// <param name="userId">A user identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>A <see cref="Task{Template}"/>.</returns>
+    Task<Result<IEnumerable<GetTemplatesResponse>, Error>> GetByUserId(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
     /// Create template.
     /// </summary>
     /// <param name="template">A template.</param>

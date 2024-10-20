@@ -4,6 +4,7 @@ import ApplicationLayout from "./ApplicationLayout.tsx";
 import Home from "../shared/features/home/Home.tsx";
 import Login from "../shared/features/auth/Login.tsx";
 import TemplateList from "../shared/features/templates/list/TemplateList.tsx";
+import Register from "../shared/features/auth/Register.tsx";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
             {
                 path: routes.LOGIN,
                 element: <Login />
+            },
+            {
+                path: routes.SIGN_UP,
+                element: <Register />
             },
             {
                 path: routes.TEMPLATES.ROOT,

@@ -1,11 +1,24 @@
 import urls from "../constants/urls.ts";
-import axios from "axios";
+import axios, {request} from "axios";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 
 export interface AuthenticateUserRequest {
     email: string;
     password: string;
+}
+
+export interface RegisterUserRequest {
+    fullName: {
+        lastName: string;
+        firstName: string;
+    },
+    email: {
+        email: string;
+    },
+    password: {
+        password: string;
+    }
 }
 
 interface UserPayload {
@@ -15,6 +28,21 @@ interface UserPayload {
     userLastname: string;
     userRole: string;
     exp: number;
+}
+
+export const Register = async (request: RegisterUserRequest) => {
+    return await axios.post(
+        `${urls.AUTH.REGISTER}`,
+        request)
+        .then(response => {
+            if (response.data.result) {
+                return response;
+            }
+        })
+        .catch(exception => {
+            console.error(exception);
+            throw exception;
+        });
 }
 
 export const Authenticate = async (request: AuthenticateUserRequest) => {

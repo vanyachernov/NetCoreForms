@@ -2,6 +2,7 @@ export const BASE_URL = import.meta.env.VITE_BASE_BACKEND_URL;
 
 const urls = {
     AUTH: {
+        REGISTER: `${BASE_URL}/auth/register`,
         AUTHENTICATE: `${BASE_URL}/accounts/authenticate`,
         REFRESH_TOKEN: `${BASE_URL}/accounts/refresh/:userId`
     },

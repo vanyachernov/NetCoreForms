@@ -1,4 +1,5 @@
-import {Link, Pane, Text} from "evergreen-ui";
+import {Avatar, CogIcon, Icon, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
+import {roles} from "../shared/logic/roles.ts";
 
 const Template = ({template}) => {
     return (
@@ -25,11 +26,40 @@ const Template = ({template}) => {
                 marginBottom={8}>
                 {template.description}
             </Text>
-            <Text 
-                size={300} 
-                color="muted">
-                Автор: {template.owner.fullName.firstName} {template.owner.fullName.lastName}
-            </Text>
+            <Pane 
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center">
+                <Text
+                    size={300}
+                    color="muted">
+                    Автор: {template.owner.fullName.firstName} {template.owner.fullName.lastName}
+                </Text>
+                <Popover
+                    position={Position.BOTTOM_LEFT}
+                    content={
+                        <Menu>
+                            <Menu.Group>
+                                <Menu.Item intent="access">
+                                    Переименование
+                                </Menu.Item>
+                                <Menu.Item intent="access">
+                                    Открытие новой вкладки
+                                </Menu.Item>
+                                <Menu.Item intent="danger">
+                                    Удалить
+                                </Menu.Item>
+                            </Menu.Group>
+                        </Menu>
+                    }>
+                    <Icon
+                        icon={CogIcon}
+                        size={12}
+                        cursor="pointer"
+                    />
+                </Popover>
+                
+            </Pane>
         </Pane>
     );
 };

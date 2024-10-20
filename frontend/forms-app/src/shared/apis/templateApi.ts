@@ -8,6 +8,14 @@ interface TemplateAttributes {
 
 interface Template {
     id: string;
+    owner: {
+        id: string;
+        email: string;
+        fullName: {
+            firstName: string;
+            lastName: string;
+        };
+    };
     attributes: TemplateAttributes;
 }
 
@@ -15,10 +23,24 @@ export type TemplateViewModel = Omit<Template & TemplateAttributes, "attributes"
 
 export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
     const response = await axios.get<{ data: Template[] }>(urls.FORMS);
-    return response.data.data.map(
-        (beer: Template): TemplateViewModel => ({
-            id: beer.id,
-            ...beer.attributes,
-        }),
-    );
+    if (response.data.result) {
+        const data = response.data.result.map(
+            ({ id, owner, title, description }: Template & TemplateAttributes): TemplateViewModel => ({
+                id,
+                owner: {
+                    ...owner,
+                    fullName: {
+                        ...owner.fullName,
+                    }
+                },
+                attributes: {
+                    title: title.value,
+                    description: description.value,
+                }
+            })
+        );
+        return data;
+    } else {
+        return [];
+    }
 };

@@ -1,6 +1,17 @@
 import {Button, Heading, Pane} from "evergreen-ui";
+import routes from "../shared/constants/routes.ts";
+import {useNavigate} from "react-router-dom";
+import {isAuthenticated} from "../shared/apis/authService.ts";
 
 function NavigationPanel() {
+    const navigate = useNavigate();
+
+    const handleFormsClick = () => {
+        navigate(isAuthenticated() 
+            ? routes.TEMPLATES.ROOT 
+            : routes.LOGIN);
+    };
+    
     return (
         <Pane 
             display="flex" 
@@ -17,7 +28,8 @@ function NavigationPanel() {
                     color="blue"
                     size="large"
                     padding={20}
-                    intent="none">
+                    intent="none"
+                    onClick={handleFormsClick}>
                     Перейти в формы
                 </Button>
             </Pane>

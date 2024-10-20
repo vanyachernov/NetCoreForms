@@ -1,11 +1,6 @@
 import axios from "axios";
 import urls from "../constants/urls.ts";
 
-interface TemplateAttributes {
-    title: string;
-    description: string;
-}
-
 interface Template {
     id: string;
     owner: {
@@ -16,31 +11,75 @@ interface Template {
             lastName: string;
         };
     };
-    attributes: TemplateAttributes;
+    title: {
+        value: string;
+    };
+    description: {
+        value: string;
+    };
 }
 
-export type TemplateViewModel = Omit<Template & TemplateAttributes, "attributes">;
+export interface TemplateViewModel {
+    id: string;
+    owner: {
+        id: string;
+        email: string;
+        fullName: {
+            firstName: string;
+            lastName: string;
+        };
+    };
+    title: string;
+    description: string;
+}
 
 export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
-    const response = await axios.get<{ data: Template[] }>(urls.FORMS);
-    if (response.data.result) {
-        const data = response.data.result.map(
-            ({ id, owner, title, description }: Template & TemplateAttributes): TemplateViewModel => ({
-                id,
-                owner: {
-                    ...owner,
-                    fullName: {
-                        ...owner.fullName,
-                    }
-                },
-                attributes: {
-                    title: title.value,
-                    description: description.value,
-                }
-            })
-        );
-        return data;
-    } else {
+    try {
+        const response = await axios.get<{ result: Template[] }>(urls.FORMS.GET);
+        if (response.data.result) {
+            return response.data.result.map(
+                ({id, owner, title, description}: Template): TemplateViewModel => ({
+                    id,
+                    owner: {
+                        ...owner,
+                        fullName: {
+                            ...owner.fullName,
+                        }
+                    },
+                    title: title?.value,
+                    description: description?.value
+                })
+            );
+        }
+        return [];
+    } catch (error) {
+        console.error("Error fetching templates:", error);
         return [];
     }
 };
+
+export const getTemplatesById: (id: string) => Promise<TemplateViewModel[]> = async (id) => {
+    try {
+        const url = urls.FORMS.GET_BY_ID.replace(":templateId", id);
+        const response = await axios.get<{ result: Template[] }>(url);
+        if (response.data.result) {
+            return response.data.result.map(
+                ({id, owner, title, description}: Template): TemplateViewModel => ({
+                    id,
+                    owner: {
+                        ...owner,
+                        fullName: {
+                            ...owner.fullName,
+                        }
+                    },
+                    title: title?.value,
+                    description: description?.value
+                })
+            );
+        }
+        return [];
+    } catch (error) {
+        console.error("Error fetching templates:", error);
+        return [];
+    }
+}

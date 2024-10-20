@@ -1,13 +1,13 @@
 export const BASE_URL = import.meta.env.VITE_BASE_BACKEND_URL;
 
 const urls = {
-    FORMS: {
-        GET: `${BASE_URL}/templates`,
-        GET_BY_ID: `${BASE_URL}/templates/:templateId`
-    },
     AUTH: {
         AUTHENTICATE: `${BASE_URL}/accounts/authenticate`,
         REFRESH_TOKEN: `${BASE_URL}/accounts/refresh/:userId`
+    },
+    FORMS: {
+        GET: `${BASE_URL}/templates`,
+        GET_BY_ID: `${BASE_URL}/templates/:templateId`
     },
     QUESTIONS: {
         CREATE: `${BASE_URL}/questions/:templateId`,

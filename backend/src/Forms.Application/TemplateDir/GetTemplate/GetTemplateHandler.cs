@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Forms.Application.DTOs;
 using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Domain.Shared;
 
@@ -13,12 +14,27 @@ public class GetTemplateHandler(ITemplatesRepository templateRepository)
         var templateResult = await templateRepository.GetById(
             templateId,
             cancellationToken);
-
+        
         if (templateResult.IsFailure)
         {
             return Errors.General.NotFound();
         }
 
-        return templateResult.Value;
+        var template = templateResult.Value;
+        
+        var templateDto = new GetTemplatesResponse
+        {
+            Id = template.Id,
+            Owner = new UserDto(
+                template.Owner.Id, 
+                template.Owner.Email,
+                new FullNameDto(
+                    template.Owner.FullName.LastName, 
+                    template.Owner.FullName.FirstName)),
+            Title = new TitleDto(template.Title.Value),
+            Description = new DescriptionDto(template.Description.Value)
+        };
+
+        return templateDto;
     }
 }

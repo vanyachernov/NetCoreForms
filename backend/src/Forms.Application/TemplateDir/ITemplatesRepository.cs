@@ -23,7 +23,7 @@ public interface ITemplatesRepository
     /// <param name="templateId">A template identifier.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>A <see cref="Task{Template}"/>.</returns>
-    Task<Result<GetTemplatesResponse, Error>> GetById(
+    Task<Result<Template, Error>> GetById(
         Guid templateId,
         CancellationToken cancellationToken = default);
     

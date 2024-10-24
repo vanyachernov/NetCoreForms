@@ -96,10 +96,10 @@ public class JwtHandler
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Name, user.FullName.FirstName),
-            new Claim(ClaimTypes.Surname, user.FullName.LastName),
+            new Claim("userId", user.Id),
+            new Claim("userEmail", user.Email!),
+            new Claim("userFirstName", user.FullName.FirstName),
+            new Claim("userLastname", user.FullName.LastName),
         };
 
         Guid.TryParse(user.Id, out var userId);
@@ -108,7 +108,7 @@ public class JwtHandler
 
         if (roleResult.IsSuccess)
         {
-            claims.Add(new Claim(ClaimTypes.Role, roleResult.Value));
+            claims.Add(new Claim("userRole", roleResult.Value));
         }
 
         return claims;

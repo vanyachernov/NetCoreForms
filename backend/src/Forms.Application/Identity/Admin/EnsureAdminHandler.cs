@@ -24,9 +24,15 @@ public class EnsureAdminHandler(UserManager<User> userManager)
             lastName != null && 
             await userManager.FindByEmailAsync(email) == null)
         {
-            var userFullName = FullName.Create(firstName, lastName);
+            var userFullName = FullName.Create(
+                firstName, 
+                lastName);
+            
             var userEmail = Email.Create(email);
-            var user = User.Create(userFullName.Value);
+            
+            var user = User.Create(
+                userFullName.Value, 
+                userEmail.Value);
 
             user.Value.SetEmail(userEmail.Value);
             user.Value.SetUsername(username);

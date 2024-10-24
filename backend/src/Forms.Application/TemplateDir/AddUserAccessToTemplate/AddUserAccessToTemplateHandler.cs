@@ -35,7 +35,9 @@ public class AddUserAccessToTemplateHandler
         if (templateResult.IsFailure)
         {
             return Errors.General.NotFound();
-        } ;
+        }
+        
+        var template = templateResult.Value;
 
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -44,23 +46,10 @@ public class AddUserAccessToTemplateHandler
             return Errors.General.NotFound();
         }
 
-        var templateResultValue = templateResult.Value;
-
-        var newTemplateResult = Template.Create(
-            TemplateId.NewId, 
-            user,
-            Title.Create(templateResultValue.Title.Value).Value,
-            Description.Create(templateResultValue.Description.Value).Value);
-
-        if (newTemplateResult.IsFailure)
-        {
-            return Errors.General.ValueIsInvalid("Template");
-        }
-        
         var newRoleResult = TemplateRoles.Create(
-            TemplateRolesId.NewId, 
-            newTemplateResult.Value, 
-            user, 
+            TemplateRolesId.NewId,
+            template,
+            user,
             role);
 
         if (newRoleResult.IsFailure)
@@ -71,9 +60,7 @@ public class AddUserAccessToTemplateHandler
         await _templateRepository.AddUserAccess(
             newRoleResult.Value, 
             cancellationToken);
-
-        var newRole = newRoleResult.Value;
         
-        return newRole.Id.Value;
+        return newRoleResult.Value.Id.Value;
     }
 }

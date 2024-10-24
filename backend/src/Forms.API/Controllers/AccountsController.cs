@@ -1,6 +1,8 @@
 using CSharpFunctionalExtensions;
 using Forms.API.Controllers.Shared;
+using Forms.API.Extensions;
 using Forms.Application.DTOs;
+using Forms.Application.TemplateDir.CreateUser;
 using Forms.Application.UserDir;
 using Forms.Application.UserDir.AuthenticateUser;
 using Forms.Domain.Shared;
@@ -23,6 +25,31 @@ public class AccountsController : ApplicationController
     {
         _usersManager = usersManager;
         _tokensRepository = tokensRepository;
+    }
+    
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(
+        [FromBody] CreateUserRequest request,
+        [FromServices] CreateUserHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _usersManager.FindByEmailAsync(request.Email.Email!);
+
+        if (user is not null)
+        {
+            var conflictError = Error.NotFound(
+                "user.exists", 
+                "User with this email already exists");
+            return conflictError.ToResponse();
+        }
+
+        var result = await handler.Handle(
+            request, 
+            cancellationToken);
+        
+        return result.IsFailure 
+            ? result.Error.ToResponse() 
+            : Ok(result.Value);
     }
     
     [HttpPost("authenticate")]

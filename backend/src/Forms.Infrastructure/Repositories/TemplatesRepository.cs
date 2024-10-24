@@ -50,36 +50,20 @@ public class TemplatesRepository : ITemplatesRepository
         }
     }
 
-    public async Task<Result<GetTemplatesResponse, Error>> GetById(
+    public async Task<Result<Template, Error>> GetById(
         Guid templateId, 
         CancellationToken cancellationToken = default)
     {
         var template = await _templateContext.Templates
             .Include(t => t.Owner)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(t => 
-                t.Id == templateId, 
-                cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == templateId, cancellationToken);
 
-        if (template is null)
+        if (template == null)
         {
             return Errors.General.NotFound();
         }
 
-        var response = new GetTemplatesResponse
-        {
-            Id = template.Id,
-            Owner = new UserDto(
-                template.Owner.Id, 
-                template.Owner.Email,
-                new FullNameDto(
-                    template.Owner.FullName.LastName, 
-                    template.Owner.FullName.FirstName)),
-            Title = new TitleDto(template.Title.Value),
-            Description = new DescriptionDto(template.Description.Value)
-        };
-
-        return response;
+        return template;
     }
 
     public async Task<Result<IEnumerable<GetTemplatesResponse>, Error>> GetByUserId(
@@ -199,9 +183,9 @@ public class TemplatesRepository : ITemplatesRepository
         await _templateContext.TemplateRoles.AddAsync(
             roles, 
             cancellationToken);
-
-        await _templateContext.SaveChangesAsync(cancellationToken);
         
+        await _templateContext.SaveChangesAsync(cancellationToken);
+
         return roles.Id.Value;
     }
 }

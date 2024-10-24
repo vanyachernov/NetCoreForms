@@ -9,7 +9,7 @@ const Greetings = () => {
     const handleRouteToTemplate = () => {
         navigate(isAuthenticated()
             ? routes.TEMPLATES.ROOT
-            : routes.LOGIN);
+            : routes.AUTH.SIGN_IN);
     };
     
     return (

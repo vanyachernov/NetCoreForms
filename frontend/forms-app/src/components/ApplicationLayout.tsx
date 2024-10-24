@@ -11,7 +11,7 @@ const ApplicationLayout = () => {
             
             <NavigationPanel />
             
-            <Pane flex="1" padding={16}>
+            <Pane flex="1">
                 <Outlet />
             </Pane>
             

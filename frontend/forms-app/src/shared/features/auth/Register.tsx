@@ -1,4 +1,4 @@
-import {Button, Heading, Pane, TextInputField} from "evergreen-ui";
+import {Button, Heading, Link, Pane, Text, TextInputField, toaster} from "evergreen-ui";
 import {useEffect, useState} from "react";
 import {
     isAuthenticated,
@@ -9,8 +9,8 @@ import routes from "../../constants/routes.ts";
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -26,8 +26,8 @@ const Login = () => {
 
         const formData: RegisterUserRequest = { 
             fullName: {
-                surname,
-                name
+                lastName,
+                firstName
             },
             email: {
                 email
@@ -41,7 +41,7 @@ const Login = () => {
             const response = await Register(formData);
 
             if (response) {
-                navigate(routes.LOGIN);
+                navigate(routes.AUTH.SIGN_IN, { state: { showSuccessToast: true } });
             }
         } catch (error: any) {
             console.error("Ошибка авторизации:", error);
@@ -53,55 +53,75 @@ const Login = () => {
             display="flex"
             alignItems="center"
             justifyContent="center"
-            paddingTop={10}>
+            paddingTop={60}>
             <Pane
                 display="flex"
                 flexDirection="column"
-                width={300}
+                width={350}
                 padding={24}
                 borderRadius={8}>
-                <Heading
-                    size={600}
-                    marginBottom={16}
-                    textAlign="center">
-                    Регистрация
-                </Heading>
                 <Pane
                     background="gray200"
                     padding={20}
                     borderRadius={10}>
+                    <Heading
+                        size={600}
+                        textAlign="left"
+                        marginBottom={6}>
+                        Регистрация
+                    </Heading>
+                    <Text>
+                        Введите все необходимые данные, чтобы иметь доступ к системе.
+                    </Text>
                     <form onSubmit={handleSubmit}>
                         <TextInputField
                             label="Имя"
-                            description="Введите Ваше имя"
+                            type="text"
                             placeholder="Пример: Иван"
-                            value={email}
-                            onChange={(e) => setName(e.target.value)}
+                            required
+                            value={firstName}
+                            marginTop={20}
+                            onChange={(e) => setFirstName(e.target.value)}
                         />
                         <TextInputField
                             label="Фамилия"
-                            description="Введите Вашу фамилию"
+                            type="text"
                             placeholder="Пример: Петров"
-                            value={email}
-                            onChange={(e) => setSurname(e.target.value)}
+                            required
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
                         />
                         <TextInputField
                             label="Логин"
-                            description="Введите ваш адрес электронной почты"
+                            type="email"
                             placeholder="example@gmail.com"
+                            required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextInputField
                             label="Пароль"
                             type="password"
-                            description="Придумайте свой пароль"
                             placeholder="Пароль"
+                            required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        <Text
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            marginBottom={10}
+                            gap={6}>
+                            У Вас уже есть аккаунт?
+                            <Link
+                                href={routes.AUTH.SIGN_IN}>
+                                Войдите!
+                            </Link>
+                        </Text>
                         <Button
                             appearance="primary"
+                            intent="success"
                             marginTop={5}
                             onClick={handleSubmit}
                             width="100%">   

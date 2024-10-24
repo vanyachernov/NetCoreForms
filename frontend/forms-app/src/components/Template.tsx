@@ -1,7 +1,24 @@
-import {Avatar, CogIcon, Icon, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
-import {roles} from "../shared/logic/roles.ts";
+import {CogIcon, Icon, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
+import {TemplateViewModel} from "../shared/apis/templateApi.ts";
+import routes from "../shared/constants/routes.ts";
+import {useNavigate} from "react-router-dom";
 
-const Template = ({template}) => {
+interface TemplateProps {
+    template: TemplateViewModel;
+}
+
+const truncateText = (text: string, maxLength: number) => {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+    }
+    return text;
+};
+
+const Template = ({template} : TemplateProps) => {
+    const truncatedTitle = truncateText(template.title, 30);
+    const truncatedDescription = truncateText(template.description, 60);
+    const navigate = useNavigate();
+    
     return (
         <Pane
             display="flex"
@@ -10,29 +27,40 @@ const Template = ({template}) => {
             borderRadius={8}
             padding={16}
             margin={8}
-            width={200}
+            width={280}
             elevation={2}
             hoverElevation={3}
+            background="tint1"
         >
-            <Link marginBottom={8} cursor="pointer">
-                <Text 
-                    size={400} 
-                    fontWeight={700}>
-                    {template.title}
+            <Link
+                onClick={() => navigate(routes.TEMPLATES.EDIT.replace(':id', template.id))}
+                marginBottom={8}
+                cursor="pointer">
+                <Text
+                    size={500}
+                    fontWeight={500}
+                    color="green600"
+                    textOverflow="ellipsis">
+                    {truncatedTitle}
                 </Text>
             </Link>
-            <Text 
-                fontSize={12} 
-                marginBottom={8}>
-                {template.description}
+            <Text
+                fontSize={14}
+                marginBottom={12}
+                color="muted"
+                textOverflow="ellipsis"
+            >
+                {truncatedDescription}
             </Text>
-            <Pane 
+            <Pane
                 display="flex"
                 justifyContent="space-between"
-                alignItems="center">
+                alignItems="center"
+            >
                 <Text
                     size={300}
-                    color="muted">
+                    color="muted"
+                >
                     Автор: {template.owner.fullName.firstName} {template.owner.fullName.lastName}
                 </Text>
                 <Popover
@@ -41,24 +69,24 @@ const Template = ({template}) => {
                         <Menu>
                             <Menu.Group>
                                 <Menu.Item intent="access">
-                                    Переименование
+                                    Переименовать
                                 </Menu.Item>
                                 <Menu.Item intent="access">
-                                    Открытие новой вкладки
+                                    Открыть в новой вкладке
                                 </Menu.Item>
                                 <Menu.Item intent="danger">
                                     Удалить
                                 </Menu.Item>
                             </Menu.Group>
                         </Menu>
-                    }>
+                    }
+                >
                     <Icon
                         icon={CogIcon}
-                        size={12}
+                        size={16}
                         cursor="pointer"
                     />
                 </Popover>
-                
             </Pane>
         </Pane>
     );

@@ -33,6 +33,11 @@ export interface TemplateViewModel {
     description: string;
 }
 
+export interface CreateTemplate {
+    title: string;
+    description: string;
+}
+
 export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
     try {
         const response = await axios.get<{ result: Template[] }>(urls.FORMS.GET);
@@ -60,7 +65,7 @@ export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
 
 export const getTemplatesById: (id: string) => Promise<TemplateViewModel[]> = async (id) => {
     try {
-        const url = urls.FORMS.GET_BY_ID.replace(":templateId", id);
+        const url = urls.USERS.GET_USER_TEMPLATES.replace(":userId", id);
         const response = await axios.get<{ result: Template[] }>(url);
         if (response.data.result) {
             return response.data.result.map(
@@ -81,5 +86,23 @@ export const getTemplatesById: (id: string) => Promise<TemplateViewModel[]> = as
     } catch (error) {
         console.error("Error fetching templates:", error);
         return [];
+    }
+}
+
+export const createTemplate: (id: string, data: CreateTemplate) => Promise<string | null> = async (id, data) => {
+    try {
+        const url = urls.USERS.CREATE_USER_TEMPLATE.replace(":userId", id);
+        const body = {
+            title: { value: data.title },
+            description: { value: data.description }
+        };
+        const response = await axios.post<{result: string}>(url, body);
+        if (response.data.result) {
+            return response.data.result;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error creating template:", error);
+        return null;
     }
 }

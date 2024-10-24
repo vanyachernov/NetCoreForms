@@ -5,6 +5,7 @@ import Home from "../shared/features/home/Home.tsx";
 import Login from "../shared/features/auth/Login.tsx";
 import TemplateList from "../shared/features/templates/list/TemplateList.tsx";
 import Register from "../shared/features/auth/Register.tsx";
+import SpecifyTemplate from "../shared/features/templates/specify/SpecifyTemplate.tsx";
 
 const router = createBrowserRouter([
     {
@@ -16,16 +17,20 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: routes.LOGIN,
+                path: routes.AUTH.SIGN_IN,
                 element: <Login />
             },
             {
-                path: routes.SIGN_UP,
+                path: routes.AUTH.SIGN_UP,
                 element: <Register />
             },
             {
                 path: routes.TEMPLATES.ROOT,
                 element: <TemplateList />
+            },
+            {
+                path: routes.TEMPLATES.EDIT,
+                element: <SpecifyTemplate />
             }
         ]
     },

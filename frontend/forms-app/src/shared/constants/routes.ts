@@ -1,7 +1,9 @@
 const routes = {
     HOME: "/",
-    LOGIN: "/sign-in",
-    SIGN_UP: "/sign-up",
+    AUTH: {
+        SIGN_IN: "/sign-in",
+        SIGN_UP: "/sign-up"
+    },
     TEMPLATES: {
         ROOT: "/templates",
         EDIT: "/templates/:id/edit"

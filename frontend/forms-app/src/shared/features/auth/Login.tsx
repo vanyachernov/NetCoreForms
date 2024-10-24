@@ -1,19 +1,29 @@
-import {Button, Heading, Pane, TextInputField} from "evergreen-ui";
+import {Button, Heading, Pane, TextInputField, Text, Link, toaster} from "evergreen-ui";
 import {useEffect, useState} from "react";
 import {Authenticate, AuthenticateUserRequest, isAuthenticated} from "../../apis/authService.ts";
 import routes from "../../constants/routes.ts";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
+    useEffect(() => {
+        if (location.state?.showSuccessToast) {
+            toaster.success('Аккаунт', {
+                description: 'Ваш аккаунт успешно создан! Войдите в него.',
+                duration: 3,
+            });
+        }
+    }, [location.state]);
+    
     useEffect(() => {
         if (isAuthenticated()) {
             navigate(routes.TEMPLATES.ROOT);
         }
-    }, []);
+    }, [navigate]);
     
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,25 +50,29 @@ const Login = () => {
             <Pane
                 display="flex"
                 flexDirection="column"
-                width={300}
-                padding={24}
+                width={350}
+                padding={10}
                 borderRadius={8}>
-                <Heading 
-                    size={600} 
-                    marginBottom={16}
-                    textAlign="center">
-                    Авторизация
-                </Heading>
                 <Pane
                     background="gray200"
                     padding={20}
                     borderRadius={10}>
+                    <Heading
+                        size={600}
+                        textAlign="left"
+                        marginBottom={6}>
+                        Авторизация
+                    </Heading>
+                    <Text>
+                        Введіть свій логін та пароль, щоб увійти у систему.
+                    </Text>
                     <form onSubmit={handleSubmit}>
                         <TextInputField
-                            label="Логин"
-                            description="Введите ваш адрес электронной почты"
+                            label="Почта"
+                            type="email"
                             placeholder="example@gmail.com"
                             value={email}
+                            marginTop={20}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextInputField
@@ -68,9 +82,22 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        <Text
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            marginBottom={10}
+                            gap={6}>
+                            У Вас нет аккаунта? 
+                            <Link
+                                href={routes.AUTH.SIGN_UP}>
+                                Создайте его!
+                            </Link>
+                        </Text>
                         <Button
                             appearance="primary"
-                            marginTop={5}
+                            intent="success"
+                            marginTop={8}
                             onClick={handleSubmit}
                             width="100%">
                             Войти

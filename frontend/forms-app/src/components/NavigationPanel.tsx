@@ -11,14 +11,14 @@ function NavigationPanel() {
     const handleFormsClick = () => {
         navigate(isAuthenticated() 
             ? routes.TEMPLATES.ROOT 
-            : routes.LOGIN);
+            : routes.AUTH.SIGN_IN);
     };
     
     const handleSignOut = async () => {
         const signOutResult = await Deauthenticate();
         
         if (signOutResult) {
-            navigate(routes.LOGIN);
+            navigate(routes.AUTH.SIGN_IN);
         }
     };
     
@@ -38,10 +38,9 @@ function NavigationPanel() {
                 {!isAuthenticated() ? (
                     <Button
                         appearance="default"
-                        color="blue"
+                        intent="success"
                         size="large"
                         padding={20}
-                        intent="none"
                         onClick={handleFormsClick}>
                         Перейти в формы
                     </Button>  

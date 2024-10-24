@@ -2,6 +2,8 @@ import urls from "../constants/urls.ts";
 import axios, {request} from "axios";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
+import {toaster} from "evergreen-ui";
+import {Await} from "react-router-dom";
 
 export interface AuthenticateUserRequest {
     email: string;
@@ -40,8 +42,13 @@ export const Register = async (request: RegisterUserRequest) => {
             }
         })
         .catch(exception => {
+            setTimeout(() => {
+                toaster.danger('Аккаунт', {
+                    description: 'При авторизації виникла помилка. Перевірте вхідні дані.',
+                    duration: 5
+                });
+            }, 0);
             console.error(exception);
-            throw exception;
         });
 }
 
@@ -58,20 +65,25 @@ export const Authenticate = async (request: AuthenticateUserRequest) => {
             return response;
         })
         .catch(exception => {
+            setTimeout(() => {
+                toaster.danger('Аккаунт', {
+                    description: 'При авторизації виникла помилка. Перевірте вхідні дані.',
+                    duration: 5
+                });
+            }, 0);
             console.error(exception);
-            throw exception;
         });
 }
 
 export const Deauthenticate = async () => {
     const accessCookieData = Cookies.get("accessToken");
     const refreshCookieData = Cookies.get("refreshToken");
-    
+
     if (accessCookieData && refreshCookieData) {
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
     }
-    
+
     return true;
 }
 

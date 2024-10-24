@@ -113,6 +113,17 @@ public class TemplatesRepository : ITemplatesRepository
         return template.Id.Value;
     }
 
+    public async Task<Result<Guid, Error>> Delete(
+        Guid templateId, 
+        CancellationToken cancellationToken = default)
+    {
+        await _templateContext.Templates
+            .Where(t => t.Id == templateId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return templateId;
+    }
+
     public async Task<Result<bool, Error>> IsExists(
         Guid templateId, 
         CancellationToken cancellationToken = default)

@@ -1,9 +1,8 @@
 import urls from "../constants/urls.ts";
-import axios, {request} from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 import {toaster} from "evergreen-ui";
-import {Await} from "react-router-dom";
 
 export interface AuthenticateUserRequest {
     email: string;
@@ -72,6 +71,8 @@ export const Authenticate = async (request: AuthenticateUserRequest) => {
                 });
             }, 0);
             console.error(exception);
+            
+            return null;
         });
 }
 
@@ -87,13 +88,15 @@ export const Deauthenticate = async () => {
     return true;
 }
 
-const GetAccessTokenFromCookies = (): string | null => {
+export const GetAccessTokenFromCookies = (): string | null => {
     const accessToken = Cookies.get("accessToken");
+    
     return accessToken || null;
 };
 
 export const GetUserFromToken = (): UserPayload | null => {
     const token = GetAccessTokenFromCookies();
+    
     if (!token) {
         return null;
     }
@@ -102,6 +105,7 @@ export const GetUserFromToken = (): UserPayload | null => {
         return jwtDecode<UserPayload>(token);
     } catch (error) {
         console.error("Invalid token", error);
+        
         return null;
     }
 };

@@ -1,4 +1,3 @@
-import React from 'react';
 import {EmptyState, SearchIcon} from "evergreen-ui";
 import urls from "../shared/constants/urls.ts";
 

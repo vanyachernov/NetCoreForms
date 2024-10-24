@@ -13,7 +13,10 @@ const Greetings = () => {
     };
     
     return (
-        <Pane display="flex" flexDirection="column" alignItems="flex-start">
+        <Pane 
+            display="flex" 
+            flexDirection="column" 
+            alignItems="flex-start">
             <Heading 
                 size={900} 
                 fontSize={50} 

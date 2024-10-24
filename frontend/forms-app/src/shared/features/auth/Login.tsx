@@ -1,5 +1,5 @@
 import {Button, Heading, Pane, TextInputField, Text, Link, toaster} from "evergreen-ui";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Authenticate, AuthenticateUserRequest, isAuthenticated} from "../../apis/authService.ts";
 import routes from "../../constants/routes.ts";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -33,10 +33,10 @@ const Login = () => {
         try {
             const response = await Authenticate(formData);
 
-            if (response.data.result) {
+            if (response && response.data && response.data.result) {
                 navigate(routes.TEMPLATES.ROOT);
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error("Ошибка авторизации:", error);
         }
     };
@@ -73,14 +73,14 @@ const Login = () => {
                             placeholder="example@gmail.com"
                             value={email}
                             marginTop={20}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                         />
                         <TextInputField
                             label="Пароль"
                             type="password"
                             placeholder="Введите ваш пароль"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         />
                         <Text
                             display="flex"

@@ -1,9 +1,15 @@
 import {useEffect, useState} from "react";
-import {createTemplate, getTemplates, getTemplatesById, TemplateViewModel} from "../../../apis/templateApi.ts";
+import {
+    createTemplate,
+    deleteTemplate,
+    getTemplates,
+    getTemplatesById,
+    TemplateViewModel
+} from "../../../apis/templateApi.ts";
 import {Heading, Pane, Text, toaster} from "evergreen-ui";
 import Template from "../../../../components/Template.tsx";
 import Spinner from "../../../../components/Spinner.tsx";
-import {GetUserFromToken, isAuthenticated} from "../../../apis/authService.ts";
+import {GetAccessTokenFromCookies, GetUserFromToken, isAuthenticated} from "../../../apis/authService.ts";
 import {roles} from "../../../logic/roles.ts";
 import EmptyStateLayout from "../../../../components/EmptyStateLayout.tsx";
 import {useNavigate} from "react-router-dom";
@@ -23,12 +29,16 @@ const TemplateList = () => {
                     return;
                 }
 
+                const accessToken = GetAccessTokenFromCookies();
+
                 let responseData = null;
 
                 if (user.userRole === roles.ADMIN) {
-                    responseData = await getTemplates();
+                    responseData = await getTemplates(accessToken!);
                 } else {
-                    responseData = await getTemplatesById(user.userId.toString());
+                    responseData = await getTemplatesById(
+                        user.userId.toString(),
+                        accessToken!);
                 }
 
                 setTemplates(responseData);
@@ -54,6 +64,8 @@ const TemplateList = () => {
             return;
         }
 
+        const accessToken = GetAccessTokenFromCookies();
+
         try {
             const templateData = {
                 title: "Мой новый шаблон",
@@ -62,7 +74,8 @@ const TemplateList = () => {
             
             const createdTemplateIdentifier = await createTemplate(
                 user?.userId, 
-                templateData);
+                templateData,
+                accessToken!);
             
             if (createdTemplateIdentifier) {
                 const editPath = routes.TEMPLATES.EDIT.replace(':id', createdTemplateIdentifier);
@@ -77,6 +90,29 @@ const TemplateList = () => {
             console.error("Error creating template:", error);
         }
     };
+    
+    const handleDeleteTemplate = async (templateId: string) => {
+        try {
+            const accessToken = GetAccessTokenFromCookies();
+
+            const deleteTemplateStatus = await deleteTemplate(
+                templateId,
+                accessToken!);
+
+            if (deleteTemplateStatus) {
+                toaster.success('Удаление шаблона', {
+                    description: 'Шаблон был успешно удален!',
+                    duration: 3,
+                });
+
+                setTemplates((prevTemplates) =>
+                    prevTemplates.filter(template => template.id !== templateId)
+                );
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     if (isLoading) {
         return <Spinner />;
@@ -168,7 +204,10 @@ const TemplateList = () => {
                                 flexWrap="wrap"
                                 alignItems="center">
                                 {templates.map((template, index) => (
-                                    <Template key={index} template={template} />
+                                    <Template 
+                                        key={index} 
+                                        template={template}
+                                        handleDeleteTemplate={handleDeleteTemplate} />
                                 ))}
                             </Pane>
                         </Pane>

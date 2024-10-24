@@ -1,14 +1,19 @@
-import {Pane, Textarea, TextInputField} from "evergreen-ui";
-import {useEffect, useState} from "react";
-import {GetUserFromToken, isAuthenticated} from "../../../apis/authService.ts";
-import {useNavigate} from "react-router-dom";
+import { Pane } from "evergreen-ui";
+import { useEffect, useState } from "react";
+import { isAuthenticated } from "../../../apis/authService.ts";
+import { useNavigate } from "react-router-dom";
 import routes from "../../../constants/routes.ts";
+import QuestionSection from "./QuestionSection.tsx";
+
+// So far...
+const questions = [
+    {}
+];
 
 const SpecifyTemplate = () => {
     const [formTitle, setFormTitle] = useState<string>('');
     const [formDescription, setFormDescription] = useState<string>('');
-
-    const user = GetUserFromToken();
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,24 +22,26 @@ const SpecifyTemplate = () => {
         }
     }, [navigate]);
 
-    useEffect(() => {
-        
-    }, []);
-    
     return (
-        <Pane padding={24}>
-            <Pane marginBottom={24}>
-                <TextInputField
-                    label="Название формы"
-                    placeholder="Введите название формы"
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                />
-                <Textarea
-                    placeholder="Описание формы"
-                    value={formDescription}
-                    onChange={(e) => setFormDescription(e.target.value)}
-                />
+        <Pane display="flex" 
+              height="100vh">
+            <Pane
+                backgroundColor="#B1D690"
+                paddingLeft={500}
+                paddingTop={30}
+                paddingRight={500}
+                width="100%"
+            >
+                {questions.map(() => (
+                    <QuestionSection
+                        key="1"
+                        id="1"
+                        title={formTitle}
+                        description={formDescription}
+                        onTitleChange={setFormTitle}
+                        onDescriptionChange={setFormDescription}
+                    />
+                ))}
             </Pane>
         </Pane>
     );

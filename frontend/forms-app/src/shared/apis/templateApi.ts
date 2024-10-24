@@ -1,5 +1,6 @@
 import axios from "axios";
 import urls from "../constants/urls.ts";
+import {GetUserFromToken} from "./authService.ts";
 
 interface Template {
     id: string;
@@ -38,9 +39,18 @@ export interface CreateTemplate {
     description: string;
 }
 
-export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
+export const getTemplates: (token: string) => Promise<TemplateViewModel[]> = async (token) => {
     try {
-        const response = await axios.get<{ result: Template[] }>(urls.FORMS.GET);
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        
+        const response = await axios.get<{ result: Template[] }>(
+            urls.FORMS.GET,
+            config);
+        
         if (response.data.result) {
             return response.data.result.map(
                 ({id, owner, title, description}: Template): TemplateViewModel => ({
@@ -56,17 +66,33 @@ export const getTemplates: () => Promise<TemplateViewModel[]> = async () => {
                 })
             );
         }
+        
         return [];
     } catch (error) {
         console.error("Error fetching templates:", error);
+        
         return [];
     }
 };
 
-export const getTemplatesById: (id: string) => Promise<TemplateViewModel[]> = async (id) => {
+export const getTemplatesById: (
+    id: string, 
+    token: string) => Promise<TemplateViewModel[]> = async (
+        id, 
+        token) => {
     try {
         const url = urls.USERS.GET_USER_TEMPLATES.replace(":userId", id);
-        const response = await axios.get<{ result: Template[] }>(url);
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        
+        const response = await axios.get<{ result: Template[] }>(
+            url, 
+            config);
+        
         if (response.data.result) {
             return response.data.result.map(
                 ({id, owner, title, description}: Template): TemplateViewModel => ({
@@ -82,27 +108,79 @@ export const getTemplatesById: (id: string) => Promise<TemplateViewModel[]> = as
                 })
             );
         }
+        
         return [];
     } catch (error) {
         console.error("Error fetching templates:", error);
+        
         return [];
     }
 }
 
-export const createTemplate: (id: string, data: CreateTemplate) => Promise<string | null> = async (id, data) => {
+export const createTemplate: (
+    id: string, 
+    data: CreateTemplate,
+    token: string) => Promise<string | null> = async (
+        id, 
+        data, 
+        token) => {
     try {
         const url = urls.USERS.CREATE_USER_TEMPLATE.replace(":userId", id);
+        
         const body = {
             title: { value: data.title },
             description: { value: data.description }
         };
-        const response = await axios.post<{result: string}>(url, body);
+        
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        
+        const response = await axios.post<{result: string}>(
+            url, 
+            body, 
+            config);
+        
         if (response.data.result) {
             return response.data.result;
         }
+        
         return null;
     } catch (error) {
         console.error("Error creating template:", error);
+        
         return null;
     }
+}
+
+export const deleteTemplate: (
+    id: string,
+    token: string) => Promise<boolean> = async (
+        id,
+        token) =>
+{
+    const user = GetUserFromToken();
+    
+    if (user === null)
+    {
+        return false;
+    }
+    
+    const url = urls.USERS.DELETE_USER_TEMPLATE
+        .replace(":userId", user.userId)
+        .replace(":templateId", id);
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    await axios.delete<{result: string}>(
+       url,
+       config);
+    
+    return true;
 }

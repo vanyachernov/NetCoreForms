@@ -60,11 +60,13 @@ public static class Inject
             };
         });
         
+        var frontEndAudience = Environment.GetEnvironmentVariable("BASE_FRONTEND_URL");
+        
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins("http://localhost:5173");
+                policy.WithOrigins(frontEndAudience!);
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
             });

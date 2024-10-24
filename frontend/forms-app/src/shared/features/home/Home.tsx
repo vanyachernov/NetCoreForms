@@ -43,7 +43,7 @@ const Home = () => {
                 >
                     <Pane flex={1} display="flex" justifyContent="center" alignItems="center">
                         <Image
-                            src="../../public/assets/images/greetings_bg.png"
+                            src="../../../public/assets/images/greetings_bg.png"
                             alt="Пример шаблона"
                             width="100%"
                             maxWidth={isMobile ? 400 : 800}

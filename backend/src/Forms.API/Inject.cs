@@ -60,6 +60,16 @@ public static class Inject
             };
         });
         
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:5173");
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+            });
+        });
+        
         return services;
     }
 }

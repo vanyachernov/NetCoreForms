@@ -1,10 +1,12 @@
 const routes = {
     HOME: "/",
-    LOGIN: "/login",
-    SIGN_UP: "/sign-up",
-    FORMS: {
-        ROOT: "/forms",
-        EDIT: "/forms/:id/edit"
+    AUTH: {
+        SIGN_IN: "/sign-in",
+        SIGN_UP: "/sign-up"
+    },
+    TEMPLATES: {
+        ROOT: "/templates",
+        EDIT: "/templates/:id/edit"
     }
 };
 

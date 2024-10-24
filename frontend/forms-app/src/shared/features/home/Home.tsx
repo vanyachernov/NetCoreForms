@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Image, Pane} from "evergreen-ui";
 import Greetings from "../../../components/Greetings.tsx";
+import greetings from "./public/assets/images/greetings_bg.png";
 
 const Home = () => {
     const [isMobile, setIsMobile] =
@@ -43,7 +44,7 @@ const Home = () => {
                 >
                     <Pane flex={1} display="flex" justifyContent="center" alignItems="center">
                         <Image
-                            src="../../../public/assets/images/greetings_bg.png"
+                            src={greetings}
                             alt="Пример шаблона"
                             width="100%"
                             maxWidth={isMobile ? 400 : 800}

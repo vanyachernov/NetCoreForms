@@ -1,4 +1,4 @@
-import {Avatar, Button, Heading, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
+import {Avatar, Button, Heading, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
 import routes from "../shared/constants/routes.ts";
 import {useNavigate} from "react-router-dom";
 import {Deauthenticate, GetUserFromToken, isAuthenticated} from "../shared/apis/authService.ts";
@@ -30,7 +30,12 @@ function NavigationPanel() {
             padding={16} 
             background="tint2">
             <Pane>
-                <Heading size={600}>Easy Forms</Heading>
+                <Link onClick={() => (isAuthenticated()) 
+                    ? navigate(routes.TEMPLATES.ROOT) 
+                    : navigate(routes.AUTH.SIGN_IN)}
+                    cursor="pointer">
+                    <Heading size={600}>Easy Forms</Heading>
+                </Link>
             </Pane>
             <Pane 
                 display="flex" 

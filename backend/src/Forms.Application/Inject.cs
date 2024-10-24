@@ -4,6 +4,7 @@ using Forms.Application.TemplateDir.AddQuestion;
 using Forms.Application.TemplateDir.AddUserAccessToTemplate;
 using Forms.Application.TemplateDir.CreateTemplate;
 using Forms.Application.TemplateDir.CreateUser;
+using Forms.Application.TemplateDir.DeleteTemplate;
 using Forms.Application.TemplateDir.GetQuestions;
 using Forms.Application.TemplateDir.GetTemplate;
 using Forms.Application.TemplateDir.GetTemplates;
@@ -28,6 +29,8 @@ public static class Inject
         services.AddScoped<CreateTemplateHandler>();
         
         services.AddScoped<CreateUserHandler>();
+        
+        services.AddScoped<DeleteTemplateHandler>();
         
         services.AddScoped<GetTemplatesHandler>();
         

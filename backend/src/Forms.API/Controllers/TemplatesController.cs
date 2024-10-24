@@ -2,6 +2,7 @@ using Forms.API.Controllers.Shared;
 using Forms.API.Extensions;
 using Forms.Application.TemplateDir.GetTemplate;
 using Forms.Application.TemplateDir.GetTemplates;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forms.API.Controllers;
@@ -17,6 +18,7 @@ public class TemplatesController : ApplicationController
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>Templates list.</returns>
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<GetTemplatesResponse>>> Get(
         [FromServices] GetTemplatesHandler template,
         CancellationToken cancellationToken = default)
@@ -36,6 +38,7 @@ public class TemplatesController : ApplicationController
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>Template.</returns>
     [HttpGet("{templateId:guid}")]
+    [Authorize]
     public async Task<ActionResult<GetTemplatesResponse>> GetTemplateById(
         [FromRoute] Guid templateId,
         [FromServices] GetTemplateHandler template,

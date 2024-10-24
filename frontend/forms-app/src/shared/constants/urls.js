@@ -1,5 +1,4 @@
 export const BASE_URL = import.meta.env.VITE_BASE_BACKEND_URL;
-
 const urls = {
     AUTH: {
         REGISTER: `${BASE_URL}/accounts/register`,
@@ -21,5 +20,4 @@ const urls = {
         DELETE_USER_TEMPLATE: `${BASE_URL}/users/:userId/templates/:templateId`
     }
 };
-
 export default urls;

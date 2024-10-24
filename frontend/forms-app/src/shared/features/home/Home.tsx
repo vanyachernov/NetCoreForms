@@ -19,6 +19,7 @@ const Home = () => {
     return (
         <Pane>
             <Pane
+                height="95vh"
                 display="flex"
                 flexDirection={isMobile ? 'column' : 'row'}
                 paddingLeft={96}

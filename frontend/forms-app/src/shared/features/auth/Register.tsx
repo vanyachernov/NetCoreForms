@@ -1,5 +1,5 @@
-import {Button, Heading, Link, Pane, Text, TextInputField, toaster} from "evergreen-ui";
-import {useEffect, useState} from "react";
+import {Button, Heading, Link, Pane, Text, TextInputField} from "evergreen-ui";
+import React, {useEffect, useState} from "react";
 import {
     isAuthenticated,
     Register,
@@ -43,7 +43,7 @@ const Login = () => {
             if (response) {
                 navigate(routes.AUTH.SIGN_IN, { state: { showSuccessToast: true } });
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error("Ошибка авторизации:", error);
         }
     };
@@ -81,7 +81,7 @@ const Login = () => {
                             required
                             value={firstName}
                             marginTop={20}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                         />
                         <TextInputField
                             label="Фамилия"
@@ -89,7 +89,7 @@ const Login = () => {
                             placeholder="Пример: Петров"
                             required
                             value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
                         />
                         <TextInputField
                             label="Логин"
@@ -97,7 +97,7 @@ const Login = () => {
                             placeholder="example@gmail.com"
                             required
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                         />
                         <TextInputField
                             label="Пароль"
@@ -105,7 +105,7 @@ const Login = () => {
                             placeholder="Пароль"
                             required
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         />
                         <Text
                             display="flex"

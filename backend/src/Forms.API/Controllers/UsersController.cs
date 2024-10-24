@@ -2,10 +2,12 @@ using Forms.API.Controllers.Shared;
 using Forms.API.Extensions;
 using Forms.Application.TemplateDir.AddUserAccessToTemplate;
 using Forms.Application.TemplateDir.CreateTemplate;
+using Forms.Application.TemplateDir.DeleteTemplate;
 using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Application.TemplateDir.GetUserTemplates;
 using Forms.Application.UserDir.GetUsers;
 using Forms.Domain.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forms.API.Controllers;
@@ -33,6 +35,7 @@ public class UsersController : ApplicationController
     /// Get templates for a specific user.
     /// </summary>
     [HttpGet("{userId:guid}/templates")]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<GetTemplatesResponse>>> GetUserTemplates(
         [FromRoute] Guid userId,
         [FromServices] GetUserTemplatesHandler template,
@@ -49,6 +52,7 @@ public class UsersController : ApplicationController
     /// Create a new template for a specific user.
     /// </summary>
     [HttpPost("{userId:guid}/templates")]
+    [Authorize]
     public async Task<ActionResult<Guid>> CreateTemplate(
         [FromRoute] Guid userId,
         [FromBody] CreateTemplateRequest request,
@@ -75,5 +79,26 @@ public class UsersController : ApplicationController
         return roleResult.IsFailure 
             ? roleResult.Error.ToResponse()
             : Ok(createTemplateResult.Value);
+    }
+    
+    /// <summary>
+    /// Delete the template of specific user.
+    /// </summary>
+    [HttpDelete("{userId:guid}/templates/{templateId:guid}")]
+    [Authorize]
+    public async Task<ActionResult<Guid>> DeleteById(
+        [FromRoute] Guid userId,
+        [FromRoute] Guid templateId,
+        [FromServices] DeleteTemplateHandler template,
+        CancellationToken cancellationToken = default)
+    {
+        var deletingTemplateResult = await template.Handle(
+            userId,
+            templateId,
+            cancellationToken);
+        
+        return deletingTemplateResult.IsFailure 
+            ? deletingTemplateResult.Error.ToResponse() 
+            : Ok(deletingTemplateResult.Value);
     }
 }

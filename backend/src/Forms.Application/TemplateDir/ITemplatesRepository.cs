@@ -46,6 +46,16 @@ public interface ITemplatesRepository
     Task<Result<Guid, Error>> Create(
         Template template,
         CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Delete template.
+    /// </summary>
+    /// <param name="templateId">Template identifier.</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
+    /// <returns>Template identifier.</returns>
+    Task<Result<Guid, Error>> Delete(
+        Guid templateId,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check if template exists.

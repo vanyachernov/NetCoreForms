@@ -29,5 +29,4 @@ public class GetQuestionsHandler(ITemplatesRepository templateRepository)
         
         return questionsResult.Value.ToList();
     }
-
 }

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Image, Pane} from "evergreen-ui";
 import Greetings from "../../../components/Greetings.tsx";
-import greetings from "./public/assets/images/greetings_bg.png";
+import greetings from "../../../../public/assets/images/greetings_bg.png";
 
 const Home = () => {
     const [isMobile, setIsMobile] =

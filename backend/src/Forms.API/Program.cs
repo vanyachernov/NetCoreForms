@@ -1,44 +1,52 @@
+using Forms.API;
+using Forms.API.Extensions;
+using Forms.Application;
+using Forms.Application.Identity.Admin;
+using Forms.Application.Identity.Roles;
+using Forms.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services
+    .AddApi()
+    .AddApplication()
+    .AddInfrastructure();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-app.UseHttpsRedirection();
+    using (var scope = app.Services.CreateScope())
+    {
+        var roleService = scope
+            .ServiceProvider
+            .GetRequiredService<EnsureRolesHandler>();
+        
+        await roleService.Handle();
+    }
+    
+    using (var scope = app.Services.CreateScope())
+    {
+        var adminService = scope
+            .ServiceProvider
+            .GetRequiredService<EnsureAdminHandler>();
+        
+        await adminService.Handle();
+    }
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    app.UseExceptionLogMiddleware();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    app.UseCors();
+    
+    app.UseAuthentication();
 
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    app.UseAuthorization();
+    
+    app.MapControllers();
+    
+    app.Run();
 }

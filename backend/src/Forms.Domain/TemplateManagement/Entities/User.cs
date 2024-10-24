@@ -26,8 +26,14 @@ public class User : IdentityUser
     public void SetRefreshTokenExpityTime(RefreshTokenExpiryTime tokenTime) => 
         RefreshTokenExpiryTime = tokenTime; 
 
-    public static Result<User> Create(FullName fullName)
+    public static Result<User> Create(
+        FullName fullName,
+        Email email)
     {
-        return new User(fullName);
+        var user = new User(fullName);
+        
+        user.SetEmail(email);
+
+        return user;
     }
 }

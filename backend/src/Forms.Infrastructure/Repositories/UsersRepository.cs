@@ -45,14 +45,46 @@ namespace Forms.Infrastructure.Repositories
             Guid userId, 
             CancellationToken cancellationToken = default)
         {
-            var role = await _templateContext.UserRoles
-                .Where(ur => ur.UserId == userId.ToString())
-                .Select(ur => ur.RoleId)
-                .FirstOrDefaultAsync(cancellationToken);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
+            if (user == null)
+            {
+                return Errors.General.NotFound(userId);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var role = roles.FirstOrDefault();
+            
             return role == null 
                 ? Errors.General.NotFound(userId)
                 : role;
+        }
+
+        public async Task<Result<Guid, Error>> Register(
+            User user, 
+            string password, 
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _userManager.CreateAsync(
+                user, 
+                password);
+
+            if (!result.Succeeded)
+            {
+                return Errors.General.ValueIsInvalid("User register");
+            }
+        
+            if (!Guid.TryParse(
+                    user.Id, 
+                    out Guid userId))
+            {
+                return Errors.General.ValueIsInvalid("UserId");
+            }
+            
+            await _userManager.AddToRoleAsync(user, "User");
+
+            return userId;
         }
     }
 }

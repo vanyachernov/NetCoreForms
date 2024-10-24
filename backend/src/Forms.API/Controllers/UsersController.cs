@@ -56,7 +56,10 @@ public class UsersController : ApplicationController
         [FromServices] AddUserAccessToTemplateHandler accessHandler,
         CancellationToken cancellationToken = default)
     {
-        var createTemplateResult = await templateHandler.Handle(userId, request, cancellationToken);
+        var createTemplateResult = await templateHandler.Handle(
+            userId, 
+            request, 
+            cancellationToken);
 
         if (createTemplateResult.IsFailure)
         {

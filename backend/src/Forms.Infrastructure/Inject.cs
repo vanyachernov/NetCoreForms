@@ -1,3 +1,4 @@
+using Forms.Application.JiraDir;
 using Forms.Application.TemplateDir;
 using Forms.Application.UserDir;
 using Forms.Infrastructure.Providers;
@@ -17,6 +18,10 @@ public static class Inject
         services.AddScoped<IUsersRepository, UsersRepository>();
 
         services.AddScoped<ITokensRepository, TokensRepository>();
+        
+        services.AddScoped<IJiraService, JiraService>();
+        
+        services.AddHttpClient<IJiraService, JiraService>();
         
         services.AddScoped<JwtHandler>();
         

@@ -22,8 +22,8 @@ public class User : IdentityUser
     public void SetUsername(string username) => 
         UserName = username;
     public void SetRefreshToken(RefreshToken token) => 
-        RefreshToken = token; 
-    public void SetRefreshTokenExpityTime(RefreshTokenExpiryTime tokenTime) => 
+        RefreshToken = token;
+    public void SetRefreshTokenExpiryTime(RefreshTokenExpiryTime tokenTime) => 
         RefreshTokenExpiryTime = tokenTime; 
 
     public static Result<User> Create(

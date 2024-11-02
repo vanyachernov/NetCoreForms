@@ -81,7 +81,7 @@ public class TokensRepository : ITokensRepository
 
         if (populateExp)
         {
-            user.SetRefreshTokenExpityTime(refreshTokenExpiryTime.Value);
+            user.SetRefreshTokenExpiryTime(refreshTokenExpiryTime.Value);
         }
 
         await _userManager.UpdateAsync(user);

@@ -74,7 +74,7 @@ public class JwtHandler
 
         if (populateExp)
         {
-            user.SetRefreshTokenExpityTime(refreshTokenExpiryTime.Value);
+            user.SetRefreshTokenExpiryTime(refreshTokenExpiryTime.Value);
         }
 
         await _usersManager.UpdateAsync(user);

@@ -1,6 +1,6 @@
 import {IconButton, Tooltip, Text, Position, EnvelopeIcon, Popover, Pane, TextInput, Button} from 'evergreen-ui';
 import React, {useState} from "react";
-import {CreateAccount, JiraApi} from "../shared/apis/jiraApi.ts";
+import {CreateAccount, JiraRequest} from "../shared/apis/jiraApi.ts";
 import {GetUserFromToken} from "../shared/apis/authApi.ts";
 
 function HelpButton() {
@@ -10,7 +10,7 @@ function HelpButton() {
     const handleSubmit = async () => {
         const userData = GetUserFromToken();
 
-        const userModel: JiraApi = {
+        const userModel: JiraRequest = {
             summary: title ?? "",
             description: description ?? "",
             email: userData?.userEmail ?? "",

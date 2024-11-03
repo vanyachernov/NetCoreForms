@@ -2,14 +2,14 @@ import urls from "../constants/urls.ts";
 import axios from "axios";
 import {toaster} from "evergreen-ui";
 
-export interface JiraApi {
+export interface JiraRequest {
     summary: string;
     description: string;
     email: string;
     currentUrl: string;
 }
 
-export const CreateAccount = async (request: JiraApi) => {
+export const CreateAccount = async (request: JiraRequest) => {
     try {
         const response = await axios.post(
             `${urls.JIRA.CREATE_SERVICE}`,

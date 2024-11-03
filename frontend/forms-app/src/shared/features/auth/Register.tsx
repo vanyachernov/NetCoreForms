@@ -4,7 +4,7 @@ import {
     isAuthenticated,
     Register,
     RegisterUserRequest
-} from "../../apis/authService.ts";
+} from "../../apis/authApi.ts";
 import routes from "../../constants/routes.ts";
 import {useNavigate} from "react-router-dom";
 

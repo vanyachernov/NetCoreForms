@@ -1,6 +1,6 @@
 import {Button, Heading, Pane, TextInputField, Text, Link, toaster} from "evergreen-ui";
 import React, {useEffect, useState} from "react";
-import {Authenticate, AuthenticateUserRequest, isAuthenticated} from "../../apis/authService.ts";
+import {Authenticate, AuthenticateUserRequest, isAuthenticated} from "../../apis/authApi.ts";
 import routes from "../../constants/routes.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 

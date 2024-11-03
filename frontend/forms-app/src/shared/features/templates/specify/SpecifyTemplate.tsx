@@ -1,6 +1,6 @@
 import { Pane } from "evergreen-ui";
 import { useEffect, useState } from "react";
-import { isAuthenticated } from "../../../apis/authService.ts";
+import { isAuthenticated } from "../../../apis/authApi.ts";
 import { useNavigate } from "react-router-dom";
 import routes from "../../../constants/routes.ts";
 import QuestionSection from "./QuestionSection.tsx";

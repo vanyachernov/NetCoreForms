@@ -9,7 +9,7 @@ import {
 import {Heading, Pane, Text, toaster} from "evergreen-ui";
 import Template from "../../../../components/Template.tsx";
 import Spinner from "../../../../components/Spinner.tsx";
-import {GetAccessTokenFromCookies, GetUserFromToken, isAuthenticated} from "../../../apis/authService.ts";
+import {GetAccessTokenFromCookies, GetUserFromToken, isAuthenticated} from "../../../apis/authApi.ts";
 import {roles} from "../../../logic/roles.ts";
 import EmptyStateLayout from "../../../../components/EmptyStateLayout.tsx";
 import {useNavigate} from "react-router-dom";

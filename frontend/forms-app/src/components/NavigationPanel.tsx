@@ -1,7 +1,7 @@
 import {Avatar, Button, Heading, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
 import routes from "../shared/constants/routes.ts";
 import {useNavigate} from "react-router-dom";
-import {Deauthenticate, GetUserFromToken, isAuthenticated} from "../shared/apis/authService.ts";
+import {Deauthenticate, GetUserFromToken, isAuthenticated} from "../shared/apis/authApi.ts";
 import {roles} from "../shared/logic/roles.ts";
 
 function NavigationPanel() {

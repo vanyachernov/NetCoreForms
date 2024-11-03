@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pane, Text, Tablist, Tab, Heading} from "evergreen-ui";
-import {GetUserFromToken} from "../../../apis/authService.ts";
+import {GetUserFromToken} from "../../../apis/authApi.ts";
 import {CreateAccount, SalesforceRequest} from "../../../apis/salesforceApi.ts";
 
 const SpecifyAccount = () => {
@@ -15,8 +15,8 @@ const SpecifyAccount = () => {
             LastName: userData?.userLastname ?? "",
             Email: userData?.userEmail ?? ""
         };
-
-        const response = await CreateAccount(userModel);
+        
+        await CreateAccount(userModel);
     }
     
     return (

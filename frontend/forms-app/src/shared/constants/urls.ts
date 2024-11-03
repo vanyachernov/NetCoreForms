@@ -20,6 +20,8 @@ const urls = {
         CREATE_USER_TEMPLATE: `${BASE_URL}/users/:userId/templates`,
         DELETE_USER_TEMPLATE: `${BASE_URL}/users/:userId/templates/:templateId`
     },
+    JIRA: {
+        CREATE_SERVICE: `${BASE_URL}/jira`,
     SALESFORCE: {
         CREATE_CONTACT: `${BASE_URL}/salesforce`,
     }

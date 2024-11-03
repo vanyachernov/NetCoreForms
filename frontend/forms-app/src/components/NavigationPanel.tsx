@@ -75,7 +75,7 @@ function NavigationPanel() {
                                     <Menu.Item 
                                         intent="danger"
                                         onClick={handleSignOut}>
-                                        Sign out
+                                        Выйти
                                     </Menu.Item>
                                 </Menu.Group>
                             </Menu>

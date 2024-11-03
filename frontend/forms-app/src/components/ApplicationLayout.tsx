@@ -1,6 +1,7 @@
 import { Pane } from 'evergreen-ui';
 import {Outlet} from "react-router-dom";
 import NavigationPanel from "./NavigationPanel.tsx";
+import JiraIconButton from "./JiraIconButton.tsx";
 
 const ApplicationLayout = () => {
     return (
@@ -13,6 +14,7 @@ const ApplicationLayout = () => {
             
             <Pane flex="1">
                 <Outlet />
+                <JiraIconButton />
             </Pane>
             
             <Pane 

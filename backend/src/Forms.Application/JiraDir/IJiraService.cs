@@ -6,16 +6,13 @@ namespace Forms.Application.JiraDir;
 
 public interface IJiraService
 {
-    Task<Result<CreateTicketResponse, Error>> CreateTicketAsync(
-        CreateTicketRequest request,
-        string userEmail,
-        string displayName);
-    
+    Task<Result<CreateTicketResponse, Error>> CreateTicketAsync(CreateTicketRequest request);
+
     Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId);
-    
+
     Task<Result<bool, Error>> CreateUserAsync(
-        string displayName, 
-        string email);
-    
+        string email,
+        string displayName);
+
     Task<Result<bool, Error>> UserExistsAsync(string email);
 }

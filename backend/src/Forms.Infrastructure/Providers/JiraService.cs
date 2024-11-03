@@ -33,16 +33,16 @@ public class JiraService : IJiraService
             Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_userEmail}:{_apiToken}")));
     }
     
-    public async Task<Result<CreateTicketResponse, Error>> CreateTicketAsync(
-        CreateTicketRequest request,
-        string userEmail,
-        string displayName)
+    public async Task<Result<CreateTicketResponse, Error>> CreateTicketAsync(CreateTicketRequest request)
     {
-        var userExists = await UserExistsAsync(userEmail);
+        var userEmail = request.UserEmail;
+        var displayName = request.DisplayName;
 
+        var userExists = await UserExistsAsync(userEmail);
+        
         if (userExists.IsFailure)
         {
-            Errors.General.ValueIsInvalid("Check user existing");
+            return userExists.Error;
         }
 
         if (!userExists.Value)
@@ -53,7 +53,7 @@ public class JiraService : IJiraService
             
             if (userCreated.IsFailure)
             {
-                Errors.General.ValueIsInvalid("Creating user");
+                return userCreated.Error;
             }
         }
         
@@ -63,58 +63,49 @@ public class JiraService : IJiraService
         
         response.EnsureSuccessStatusCode();
         
-        var jiraTicketResponse = await response.Content
-            .ReadFromJsonAsync<CreateTicketResponse>();  
-    
+        var jiraTicketResponse = await response.Content.ReadFromJsonAsync<CreateTicketResponse>();
+        
         return jiraTicketResponse;
     }
 
     public async Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId)
     {
         var jqlQuery = $"reporter={userId}";
+        
         var url = $"/rest/api/2/search?jql={Uri.EscapeDataString(jqlQuery)}";
         
         var response = await _httpClient.GetAsync(url);
-
+        
         response.EnsureSuccessStatusCode();
 
         var searchResult = await response.Content.ReadFromJsonAsync<SearchTicketsResponse>();
-
-        return searchResult?.Issues ?? new List<CreateTicketResponse>();
+        
+        return searchResult?.Issues ?? [];
     }
 
     public async Task<Result<bool, Error>> CreateUserAsync(
-        string displayName, 
-        string email)
+        string email, 
+        string displayName)
     {
+        var username = email[..email.IndexOf('@')];
+        
         var newUser = new
         {
-            displayName,
+            name = username,
+            password = Guid.NewGuid().ToString("N").Substring(0, 12),
             emailAddress = email,
-            name = email,
-            notification = "Jira",
-            active = true,
-            applicationKeys = new string[] { "jira-software" }
+            displayName = displayName,
+            notification = false
         };
     
         var requestUri = "rest/api/2/user";
         
-        var requestContent = new StringContent(
-            JsonSerializer.Serialize(newUser), 
-            Encoding.UTF8, 
-            "application/json");
+        var requestContent = new StringContent(JsonSerializer.Serialize(newUser), Encoding.UTF8, "application/json");
         
         var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = requestContent
         };
-
-        var authToken = Convert.ToBase64String(
-            Encoding.ASCII.GetBytes($"{_userEmail}:{_apiToken}"));
-        
-        request.Headers.Authorization = new AuthenticationHeaderValue(
-            "Basic", 
-            authToken);
 
         try
         {
@@ -126,44 +117,31 @@ public class JiraService : IJiraService
         }
         catch (HttpRequestException)
         { 
-            Errors.General.ValueIsInvalid("Creating user");
-            return false;
+            return Errors.General.ValueIsInvalid("Creating user");
         }
     }
     
     public async Task<Result<bool, Error>> UserExistsAsync(string email)
     {
         var requestUri = $"rest/api/2/user?username={email}";
-        
-        var request = new HttpRequestMessage(
-            HttpMethod.Get, 
-            requestUri);
-        
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        
-        var authToken = Convert.ToBase64String(
-            Encoding.ASCII.GetBytes($"{_userEmail}:{_apiToken}"));
-        
-        request.Headers.Authorization = new AuthenticationHeaderValue(
-            "Basic", 
-            authToken);
+        var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
         try
         {
             var response = await _httpClient.SendAsync(request);
-        
+            
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return false;
             }
-        
+            
             response.EnsureSuccessStatusCode();
             
             return true;
         }
         catch (HttpRequestException)
         {
-            return false;
+            return Errors.General.ValueIsInvalid("User existence check failed");
         }
     }
 }

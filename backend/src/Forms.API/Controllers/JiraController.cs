@@ -12,16 +12,11 @@ public class JiraController(IJiraService jiraService) : ApplicationController
 {
     [HttpPost]
     public async Task<IActionResult> CreateTicket(
-        [FromBody] CreateTicketRequest request,
-        [FromQuery] string userEmail, 
-        [FromQuery] string displayName)
+        [FromBody] CreateTicketRequest request)
     {
         try
         {
-            var response = await jiraService.CreateTicketAsync(
-                request, 
-                userEmail, 
-                displayName);
+            var response = await jiraService.CreateTicketAsync(request);
 
             if (response.IsFailure)
             {
@@ -37,7 +32,8 @@ public class JiraController(IJiraService jiraService) : ApplicationController
     }
 
     [HttpGet("{userId}")]
-    public async Task<IActionResult> GetUserTickets(string userId)
+    public async Task<IActionResult> GetUserTickets(
+        string userId)
     {
         try
         {

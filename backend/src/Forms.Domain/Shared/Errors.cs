@@ -39,6 +39,16 @@ public class Errors
         }
     }
 
+    public static class Salesforce
+    {
+        public static Error Duplicate()
+        {
+            return Error.Validation(
+                "duplicate.account",
+            "An account on the service has already been created.");
+        }
+    }
+
     public static class Options
     {
         public static Error MoreThanOneOption()

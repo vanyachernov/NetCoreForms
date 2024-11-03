@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using CSharpFunctionalExtensions;
 using Forms.Application.DTOs;
@@ -42,8 +43,12 @@ public class CreateContactHandler
             Email = request.Email
         };
         
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            token.Value.accessToken);
+        
         var response = await _httpClient.PostAsync(
-            $"{instanceUrl}/services/data/v59.0/sobjects/forms_app/Contact",
+            $"{instanceUrl}/services/data/v59.0/sobjects/Contact",
             new StringContent(
                 JsonConvert.SerializeObject(contactData), 
                 Encoding.UTF8,
@@ -51,9 +56,7 @@ public class CreateContactHandler
 
         if (!response.IsSuccessStatusCode)
         {
-            var error = await response.Content.ReadAsStringAsync();
-
-            return Errors.General.ValueIsInvalid($"Failed to create Contact: {error}");
+            return Errors.Salesforce.Duplicate();
         }
 
         var content = await response.Content.ReadAsStringAsync();

@@ -1,4 +1,4 @@
-using Forms.Application.DTOs;
+using Forms.API.Extensions;
 using Forms.Application.UserDir.CreateContact;
 using Forms.Application.UserDir.СreateAccount;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ namespace Forms.API.Controllers.Shared;
 
 [ApiController]
 [Route("[controller]")]
-public class SalesforceAuthController : ApplicationController
+public class SalesforceController : ApplicationController
 {
     [HttpPost]
     public async Task<IActionResult> GetInstanceUrl(
@@ -17,16 +17,26 @@ public class SalesforceAuthController : ApplicationController
     {
         try
         {
-            var accountId = await accountHandler.Handle(request.AccountName);
-            
-            var contactId = await contactHandler.Handle(
-                accountId.Value,
+            var accountIdentifierResult = await accountHandler.Handle(request.AccountName);
+        
+            if (accountIdentifierResult.IsFailure)
+            {
+                return accountIdentifierResult.Error.ToResponse();
+            }
+
+            var contactIdentifierResult = await contactHandler.Handle(
+                accountIdentifierResult.Value,
                 request);
-            
+
+            if (contactIdentifierResult.IsFailure)
+            {
+                return contactIdentifierResult.Error.ToResponse();
+            }
+
             return Ok(new
             {
-                AccountId = accountId, 
-                ContactId = contactId
+                AccountId = accountIdentifierResult.Value,
+                ContactId = contactIdentifierResult.Value
             });
         }
         catch (Exception ex)
@@ -34,4 +44,5 @@ public class SalesforceAuthController : ApplicationController
             return BadRequest(new { error = ex.Message });
         }
     }
+
 }

@@ -43,7 +43,7 @@ public class CreateAccountHandler
         };
 
         var response = await _httpClient.PostAsync(
-            $"{instanceUrl}/services/data/v59.0/sobjects/forms_app/Account",
+            $"{instanceUrl}/services/data/v59.0/sobjects/Account",
             new StringContent(
                 JsonConvert.SerializeObject(accountData), 
                 Encoding.UTF8, 
@@ -51,9 +51,7 @@ public class CreateAccountHandler
 
         if (!response.IsSuccessStatusCode)
         {
-            var error = await response.Content.ReadAsStringAsync();
-            
-            return Errors.General.ValueIsInvalid($"Failed to create Account: {error}");
+            return Errors.Salesforce.Duplicate();
         }
 
         var content = await response.Content.ReadAsStringAsync();

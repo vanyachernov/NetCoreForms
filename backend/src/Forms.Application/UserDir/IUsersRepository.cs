@@ -32,7 +32,7 @@ public interface IUsersRepository
     /// <param name="password">Desired account password.</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns>New user's identifier.</returns>
-    public Task<Result<Guid, Error>> Register(
+    Task<Result<Guid, Error>> Register(
         User user,
         string password,
         CancellationToken cancellationToken = default);

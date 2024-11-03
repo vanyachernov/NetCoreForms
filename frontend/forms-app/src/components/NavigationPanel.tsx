@@ -22,6 +22,12 @@ function NavigationPanel() {
         }
     };
     
+    const handleSettings = async () => {
+        navigate(isAuthenticated()
+            ? routes.ACCOUNT.ROOT
+            : routes.AUTH.SIGN_IN);
+    };
+    
     return (
         <Pane 
             display="flex" 
@@ -61,6 +67,11 @@ function NavigationPanel() {
                                             Admin Panel
                                         </Menu.Item>
                                     )}
+                                    <Menu.Item
+                                        intent="access"
+                                        onClick={handleSettings}>
+                                        Account Settings
+                                    </Menu.Item>
                                     <Menu.Item 
                                         intent="danger"
                                         onClick={handleSignOut}>

@@ -22,6 +22,8 @@ const urls = {
     },
     JIRA: {
         CREATE_SERVICE: `${BASE_URL}/jira`,
+    SALESFORCE: {
+        CREATE_CONTACT: `${BASE_URL}/salesforce`,
     }
 };
 

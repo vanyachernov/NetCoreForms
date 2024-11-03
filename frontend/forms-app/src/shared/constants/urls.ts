@@ -19,6 +19,9 @@ const urls = {
         GET_USER_TEMPLATES: `${BASE_URL}/users/:userId/templates`,
         CREATE_USER_TEMPLATE: `${BASE_URL}/users/:userId/templates`,
         DELETE_USER_TEMPLATE: `${BASE_URL}/users/:userId/templates/:templateId`
+    },
+    JIRA: {
+        CREATE_SERVICE: `${BASE_URL}/jira`,
     }
 };
 

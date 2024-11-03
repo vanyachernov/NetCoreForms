@@ -1,6 +1,6 @@
 namespace Forms.Application.JiraDir.Shared;
 
-public class IssueType
+public record IssueType
 {
-    public string Id { get; set; }
+    public string id { get; set; } = "10001";
 }

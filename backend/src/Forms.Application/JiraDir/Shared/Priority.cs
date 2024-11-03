@@ -1,6 +1,6 @@
 namespace Forms.Application.JiraDir.Shared;
 
-public class Priority
+public record Priority
 {
-    public string Name { get; set; }
+    public string name { get; set; }
 }

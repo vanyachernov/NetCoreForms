@@ -16,18 +16,18 @@ public class JiraController(IJiraService jiraService) : ApplicationController
     {
         try
         {
-            var response = await jiraService.CreateTicketAsync(request);
+            var newTicketResult = await jiraService.CreateTicketAsync(request);
 
-            if (response.IsFailure)
+            if (newTicketResult.IsFailure)
             {
-                return response.Error.ToResponse();
+                return newTicketResult.Error.ToResponse();
             }
             
-            return Ok(response);
+            return Ok(newTicketResult.Value);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Ошибка при создании тикета: {ex.Message}");
+            return BadRequest(ex);
         }
     }
 
@@ -43,7 +43,7 @@ public class JiraController(IJiraService jiraService) : ApplicationController
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Ошибка при получении тикетов пользователя: {ex.Message}");
+            return BadRequest(ex);
         }
     }
 }

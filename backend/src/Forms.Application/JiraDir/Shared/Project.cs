@@ -1,6 +1,6 @@
 namespace Forms.Application.JiraDir.Shared;
 
-public class Project
+public record Project
 {
-    public string Key { get; set; }
+    public string key { get; set; }
 }

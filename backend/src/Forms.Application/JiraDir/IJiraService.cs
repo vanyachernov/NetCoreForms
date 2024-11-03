@@ -10,9 +10,9 @@ public interface IJiraService
 
     Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId);
 
-    Task<Result<bool, Error>> CreateUserAsync(
-        string email,
-        string displayName);
+    Task<Result<string, Error>> CreateUserAsync(string email);
 
     Task<Result<bool, Error>> UserExistsAsync(string email);
+
+    Task<Result<string, Error>> GetUserAccountIdAsync(string email);
 }

@@ -9,7 +9,10 @@ using Forms.Application.TemplateDir.GetQuestions;
 using Forms.Application.TemplateDir.GetTemplate;
 using Forms.Application.TemplateDir.GetTemplates;
 using Forms.Application.TemplateDir.GetUserTemplates;
+using Forms.Application.UserDir.AuthenticateSalesforce;
+using Forms.Application.UserDir.CreateContact;
 using Forms.Application.UserDir.GetUsers;
+using Forms.Application.UserDir.СreateAccount;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Forms.Application;
@@ -30,6 +33,12 @@ public static class Inject
         
         services.AddScoped<CreateUserHandler>();
         
+        services.AddScoped<AuthenticateSalesforceHandler>();
+        
+        services.AddScoped<CreateAccountHandler>();
+
+        services.AddScoped<CreateContactHandler>();
+        
         services.AddScoped<DeleteTemplateHandler>();
         
         services.AddScoped<GetTemplatesHandler>();
@@ -41,6 +50,8 @@ public static class Inject
         services.AddScoped<GetUserTemplatesHandler>();
         
         services.AddScoped<AddUserAccessToTemplateHandler>();
+        
+        services.AddHttpClient<CreateContactHandler>();
             
         return services;
     }

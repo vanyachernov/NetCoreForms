@@ -39,7 +39,11 @@ public static class Inject
         var jwtSecurityKey = Environment.GetEnvironmentVariable("JWT_SECRET");
         var jwtValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
         var jwtValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-        
+        var oauthConsumerKey = Environment.GetEnvironmentVariable("SALESFORCE_CONSUMER_KEY");
+        var oauthConsumerSecret = Environment.GetEnvironmentVariable("SALESFORCE_CONSUMER_SECRET_KEY");
+        var forceAuthEndpoint = Environment.GetEnvironmentVariable("SALESFORCE_AUTH_ENDPOINT");
+        var forceTokenEndpoint = Environment.GetEnvironmentVariable("SALESFORCE_TOKEN_ENDPOINT");
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,6 +62,14 @@ public static class Inject
                 ValidAudience = jwtValidAudience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecurityKey!))
             };
+        }).AddOAuth("Salesforce", options =>
+        {
+            options.ClientId = oauthConsumerKey!;
+            options.ClientSecret = oauthConsumerSecret!;
+            options.CallbackPath = new PathString("/auth/callback");
+            options.AuthorizationEndpoint = forceAuthEndpoint!;
+            options.TokenEndpoint = forceTokenEndpoint!;
+            options.SaveTokens = true;
         });
         
         services.AddCors(options =>

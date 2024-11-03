@@ -6,6 +6,7 @@ import Login from "../shared/features/auth/Login.tsx";
 import TemplateList from "../shared/features/templates/list/TemplateList.tsx";
 import Register from "../shared/features/auth/Register.tsx";
 import SpecifyTemplate from "../shared/features/templates/specify/SpecifyTemplate.tsx";
+import SpecifyAccount from "../shared/features/accounts/specify/SpecifyAccount.tsx";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
             {
                 path: routes.TEMPLATES.EDIT,
                 element: <SpecifyTemplate />
+            },
+            {
+                path: routes.ACCOUNT.ROOT,
+                element: <SpecifyAccount />
             }
         ]
     },

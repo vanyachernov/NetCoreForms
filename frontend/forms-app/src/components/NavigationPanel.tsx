@@ -70,7 +70,7 @@ function NavigationPanel() {
                                     <Menu.Item
                                         intent="access"
                                         onClick={handleSettings}>
-                                        Account Settings
+                                        Настройки аккаунта
                                     </Menu.Item>
                                     <Menu.Item 
                                         intent="danger"

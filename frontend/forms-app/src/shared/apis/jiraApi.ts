@@ -3,10 +3,12 @@ import axios from "axios";
 import {toaster} from "evergreen-ui";
 
 export interface JiraRequest {
-    summary: string;
-    description: string;
-    email: string;
-    currentUrl: string;
+    Summary: string;
+    Description: string;
+    Email: string;
+    Priority: string;
+    Link: string;
+    TemplateName: string | null;
 }
 
 export const CreateAccount = async (request: JiraRequest) => {

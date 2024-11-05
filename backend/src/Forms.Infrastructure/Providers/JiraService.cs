@@ -8,7 +8,6 @@ using Forms.Application.JiraDir;
 using Forms.Application.JiraDir.CreateTicket;
 using Forms.Application.JiraDir.GetUser;
 using Forms.Application.JiraDir.SearchTickets;
-using Forms.Application.JiraDir.Shared;
 using Forms.Domain.Shared;
 
 namespace Forms.Infrastructure.Providers;
@@ -74,24 +73,30 @@ public class JiraService : IJiraService
             accountId = existingUserAccountIdResult.Value;
         }
         
-        var jiraIssueRequest = new JiraIssueRequest
+        var jiraIssueRequest = new
         {
-            fields = new Fields
+            fields = new
             {
-                project = new Project
+                project = new
                 {
                     key = _projectId
                 },
+                assignee = new
+                {
+                    accountId = accountId
+                },
                 summary = request.Summary,
-                description = $"{request.Description}\nTask Site: {request.CurrentUrl}",
-                issuetype = new IssueType
+                description = request.Description,
+                issuetype = new
                 {
                     id = "10001"
                 },
-                assignee = new Assigne
+                customfield_10038 = new
                 {
-                    accountId = accountId
-                }
+                    value = request.Priority
+                },
+                customfield_10040 = request.TemplateName,
+                customfield_10041 = request.Link
             }
         };
         

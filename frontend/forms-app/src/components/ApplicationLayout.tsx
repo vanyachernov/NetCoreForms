@@ -2,8 +2,17 @@ import { Pane } from 'evergreen-ui';
 import {Outlet} from "react-router-dom";
 import NavigationPanel from "./NavigationPanel.tsx";
 import JiraIconButton from "./JiraIconButton.tsx";
+import {useEffect} from "react";
+import {useAuth} from "./AuthContext";
 
 const ApplicationLayout = () => {
+    const { isAuth, updateAuthStatus } = useAuth();
+
+    useEffect(() => {
+        updateAuthStatus();
+    }, [updateAuthStatus]);
+    
+    
     return (
         <Pane 
             display="flex" 
@@ -14,7 +23,7 @@ const ApplicationLayout = () => {
             
             <Pane flex="1">
                 <Outlet />
-                <JiraIconButton />
+                {isAuth ? <JiraIconButton /> : null}
             </Pane>
             
             <Pane 

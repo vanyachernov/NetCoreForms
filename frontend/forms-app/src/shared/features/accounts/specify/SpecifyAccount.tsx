@@ -1,10 +1,19 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Pane, Text, Tablist, Tab, Heading} from "evergreen-ui";
-import {GetUserFromToken} from "../../../apis/authApi.ts";
+import {GetUserFromToken, isAuthenticated} from "../../../apis/authApi.ts";
 import {CreateAccount, SalesforceRequest} from "../../../apis/salesforceApi.ts";
+import routes from "../../../constants/routes.ts";
+import {useNavigate} from "react-router-dom";
 
 const SpecifyAccount = () => {
     const [selectedTab, setSelectedTab] = useState<string>("account");
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        navigate(isAuthenticated()
+            ? routes.ACCOUNT.ROOT
+            : routes.AUTH.SIGN_IN);
+    }, [navigate]);
     
     const handleSalesforce = async () => {
         const userData = GetUserFromToken();

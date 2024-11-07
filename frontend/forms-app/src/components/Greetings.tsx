@@ -1,7 +1,7 @@
 import {Button, Heading, Pane, Text} from "evergreen-ui";
 import {useNavigate} from "react-router-dom";
 import routes from "../shared/constants/routes.ts";
-import {isAuthenticated} from "../shared/apis/authService.ts";
+import {isAuthenticated} from "../shared/apis/authApi.ts";
 
 const Greetings = () => {
     const navigate = useNavigate();

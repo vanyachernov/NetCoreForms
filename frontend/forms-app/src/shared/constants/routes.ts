@@ -7,6 +7,9 @@ const routes = {
     TEMPLATES: {
         ROOT: "/templates",
         EDIT: "/templates/:id/edit"
+    },
+    ACCOUNT: {
+        ROOT: "/account"
     }
 };
 

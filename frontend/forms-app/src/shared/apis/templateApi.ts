@@ -1,6 +1,6 @@
 import axios from "axios";
 import urls from "../constants/urls.ts";
-import {GetUserFromToken} from "./authService.ts";
+import {GetUserFromToken} from "./authApi.ts";
 
 interface Template {
     id: string;

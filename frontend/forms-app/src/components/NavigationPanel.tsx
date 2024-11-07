@@ -1,7 +1,7 @@
 import {Avatar, Button, Heading, Link, Menu, Pane, Popover, Position, Text} from "evergreen-ui";
 import routes from "../shared/constants/routes.ts";
 import {useNavigate} from "react-router-dom";
-import {Deauthenticate, GetUserFromToken, isAuthenticated} from "../shared/apis/authService.ts";
+import {Deauthenticate, GetUserFromToken, isAuthenticated} from "../shared/apis/authApi.ts";
 import {roles} from "../shared/logic/roles.ts";
 
 function NavigationPanel() {
@@ -20,6 +20,12 @@ function NavigationPanel() {
         if (signOutResult) {
             navigate(routes.AUTH.SIGN_IN);
         }
+    };
+    
+    const handleSettings = async () => {
+        navigate(isAuthenticated()
+            ? routes.ACCOUNT.ROOT
+            : routes.AUTH.SIGN_IN);
     };
     
     return (
@@ -61,10 +67,15 @@ function NavigationPanel() {
                                             Admin Panel
                                         </Menu.Item>
                                     )}
+                                    <Menu.Item
+                                        intent="access"
+                                        onClick={handleSettings}>
+                                        Настройки аккаунта
+                                    </Menu.Item>
                                     <Menu.Item 
                                         intent="danger"
                                         onClick={handleSignOut}>
-                                        Sign out
+                                        Выйти
                                     </Menu.Item>
                                 </Menu.Group>
                             </Menu>

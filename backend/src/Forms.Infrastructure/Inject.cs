@@ -24,7 +24,7 @@ public static class Inject
         
         services.AddHttpClient<IJiraService, JiraService>();
         
-        services.AddHttpClient<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         
         services.AddScoped<JwtHandler>();
         

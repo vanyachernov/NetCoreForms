@@ -22,6 +22,7 @@ const urls = {
     },
     JIRA: {
         CREATE_SERVICE: `${BASE_URL}/jira`,
+        GET_USER_TASKS: (email: string) => `${BASE_URL}/jira/${email}`,
     },
     SALESFORCE: {
         CREATE_CONTACT: `${BASE_URL}/salesforce`,

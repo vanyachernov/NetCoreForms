@@ -2,26 +2,32 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using CSharpFunctionalExtensions;
 using DotNetEnv;
 using Forms.Application.JiraDir;
 using Forms.Application.JiraDir.CreateTicket;
 using Forms.Application.JiraDir.GetUser;
 using Forms.Application.JiraDir.SearchTickets;
+using Forms.Application.Providers;
 using Forms.Domain.Shared;
 
 namespace Forms.Infrastructure.Providers;
 
 public class JiraService : IJiraService
 {
+    private readonly IPasswordHasher _passwordHasher;
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
     private readonly string _apiToken;
     private readonly string _userEmail;
     private readonly string _projectId;
 
-    public JiraService(HttpClient httpClient)
+    public JiraService(
+        IPasswordHasher passwordHasher,
+        HttpClient httpClient)
     {
+        _passwordHasher = passwordHasher;
         _httpClient = httpClient;
         
         Env.Load("../Forms.API/.env");
@@ -124,31 +130,64 @@ public class JiraService : IJiraService
         }
     }
 
-    public async Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId)
+    public async Task<Result<List<object>, Error>> GetUserTicketsAsync(string email)
     {
-        var jqlQuery = $"reporter={userId}";
+        var existingUserResult = await GetUserAccountIdAsync(email);
+
+        if (existingUserResult.IsFailure)
+        {
+            return Errors.General.NotFound();
+        }
         
+        var jqlQuery = $"assignee={existingUserResult.Value}";
         var url = $"/rest/api/2/search?jql={Uri.EscapeDataString(jqlQuery)}";
-        
+
         var response = await _httpClient.GetAsync(url);
-        
         response.EnsureSuccessStatusCode();
 
-        var searchResult = await response.Content.ReadFromJsonAsync<SearchTicketsResponse>();
+        var jsonResponse = await response.Content.ReadFromJsonAsync<JsonObject>();
+
+        var issues = jsonResponse?["issues"]?.AsArray();
         
-        return searchResult?.Issues ?? [];
+        if (issues == null)
+        {
+            return Result.Success<List<object>, Error>([]);
+        }
+
+        var tickets = issues.Select(issue => new 
+        {
+            Id = issue["id"]?.ToString(),
+            Key = issue["key"]?.ToString(),
+            Self = issue["self"]?.ToString(),
+            Fields = new 
+            {
+                Summary = issue["fields"]?["summary"]?.ToString(),
+                Description = issue["fields"]?["description"]?.ToString(),
+                Status = issue["fields"]?["status"]?["name"]?.ToString(),
+                Link = issue["fields"]?["customfield_10041"]?.ToString(),
+                Priority = new 
+                {
+                    Value = issue["fields"]?["customfield_10038"]?["value"]?.ToString()
+                },
+                Type = issue["fields"]?["issuetype"]?["name"]?.ToString()
+            }
+        }).ToList();
+
+        return tickets.Cast<object>().ToList();
     }
     
     public async Task<Result<string, Error>> CreateUserAsync(string email)
     {
         var userShortname = email[..email.IndexOf('@')];
+        
+        var plainPassword = _passwordHasher.Generate(12);
     
         var newUser = new
         {
             displayName = userShortname,
             emailAddress = email,
             name = userShortname,
-            password = Guid.NewGuid().ToString("N").Substring(0, 12),
+            password = plainPassword,
             products = new[] { "jira-software" }
         };
 

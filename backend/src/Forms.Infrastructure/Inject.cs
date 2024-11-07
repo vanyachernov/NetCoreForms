@@ -1,4 +1,5 @@
 using Forms.Application.JiraDir;
+using Forms.Application.Providers;
 using Forms.Application.TemplateDir;
 using Forms.Application.UserDir;
 using Forms.Infrastructure.Providers;
@@ -22,6 +23,8 @@ public static class Inject
         services.AddScoped<IJiraService, JiraService>();
         
         services.AddHttpClient<IJiraService, JiraService>();
+        
+        services.AddHttpClient<IPasswordHasher, PasswordHasher>();
         
         services.AddScoped<JwtHandler>();
         

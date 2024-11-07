@@ -31,15 +31,19 @@ public class JiraController(IJiraService jiraService) : ApplicationController
         }
     }
 
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetUserTickets(
-        string userId)
+    [HttpGet("{email}")]
+    public async Task<IActionResult> GetUserTickets(string email)
     {
         try
         {
-            var tickets = await jiraService.GetUserTicketsAsync(userId);
+            var ticketsResult = await jiraService.GetUserTicketsAsync(email);
+
+            if (ticketsResult.IsFailure)
+            {
+                return ticketsResult.Error.ToResponse();
+            }
             
-            return Ok(tickets);
+            return Ok(ticketsResult.Value);
         }
         catch (Exception ex)
         {

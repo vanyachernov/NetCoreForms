@@ -8,7 +8,7 @@ public interface IJiraService
 {
     Task<Result<CreateTicketResponse, Error>> CreateTicketAsync(CreateTicketRequest request);
 
-    Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId);
+    Task<Result<List<object>, Error>> GetUserTicketsAsync(string email);
 
     Task<Result<string, Error>> CreateUserAsync(string email);
 

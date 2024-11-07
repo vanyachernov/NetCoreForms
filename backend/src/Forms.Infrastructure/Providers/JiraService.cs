@@ -9,20 +9,25 @@ using Forms.Application.JiraDir;
 using Forms.Application.JiraDir.CreateTicket;
 using Forms.Application.JiraDir.GetUser;
 using Forms.Application.JiraDir.SearchTickets;
+using Forms.Application.Providers;
 using Forms.Domain.Shared;
 
 namespace Forms.Infrastructure.Providers;
 
 public class JiraService : IJiraService
 {
+    private readonly IPasswordHasher _passwordHasher;
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
     private readonly string _apiToken;
     private readonly string _userEmail;
     private readonly string _projectId;
 
-    public JiraService(HttpClient httpClient)
+    public JiraService(
+        IPasswordHasher passwordHasher,
+        HttpClient httpClient)
     {
+        _passwordHasher = passwordHasher;
         _httpClient = httpClient;
         
         Env.Load("../Forms.API/.env");
@@ -174,13 +179,15 @@ public class JiraService : IJiraService
     public async Task<Result<string, Error>> CreateUserAsync(string email)
     {
         var userShortname = email[..email.IndexOf('@')];
+        
+        var plainPassword = _passwordHasher.Generate(12);
     
         var newUser = new
         {
             displayName = userShortname,
             emailAddress = email,
             name = userShortname,
-            password = Guid.NewGuid().ToString("N").Substring(0, 12),
+            password = plainPassword,
             products = new[] { "jira-software" }
         };
 

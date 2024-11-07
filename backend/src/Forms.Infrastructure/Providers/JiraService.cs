@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using CSharpFunctionalExtensions;
 using DotNetEnv;
 using Forms.Application.JiraDir;
@@ -124,19 +125,50 @@ public class JiraService : IJiraService
         }
     }
 
-    public async Task<List<CreateTicketResponse>> GetUserTicketsAsync(string userId)
+    public async Task<Result<List<object>, Error>> GetUserTicketsAsync(string email)
     {
-        var jqlQuery = $"reporter={userId}";
+        var existingUserResult = await GetUserAccountIdAsync(email);
+
+        if (existingUserResult.IsFailure)
+        {
+            return Errors.General.NotFound();
+        }
         
+        var jqlQuery = $"assignee={existingUserResult.Value}";
         var url = $"/rest/api/2/search?jql={Uri.EscapeDataString(jqlQuery)}";
-        
+
         var response = await _httpClient.GetAsync(url);
-        
         response.EnsureSuccessStatusCode();
 
-        var searchResult = await response.Content.ReadFromJsonAsync<SearchTicketsResponse>();
+        var jsonResponse = await response.Content.ReadFromJsonAsync<JsonObject>();
+
+        var issues = jsonResponse?["issues"]?.AsArray();
         
-        return searchResult?.Issues ?? [];
+        if (issues == null)
+        {
+            return Result.Success<List<object>, Error>([]);
+        }
+
+        var tickets = issues.Select(issue => new 
+        {
+            Id = issue["id"]?.ToString(),
+            Key = issue["key"]?.ToString(),
+            Self = issue["self"]?.ToString(),
+            Fields = new 
+            {
+                Summary = issue["fields"]?["summary"]?.ToString(),
+                Description = issue["fields"]?["description"]?.ToString(),
+                Status = issue["fields"]?["status"]?["name"]?.ToString(),
+                Link = issue["fields"]?["customfield_10041"]?.ToString(),
+                Priority = new 
+                {
+                    Value = issue["fields"]?["customfield_10038"]?["value"]?.ToString()
+                },
+                Type = issue["fields"]?["issuetype"]?["name"]?.ToString()
+            }
+        }).ToList();
+
+        return tickets.Cast<object>().ToList();
     }
     
     public async Task<Result<string, Error>> CreateUserAsync(string email)
